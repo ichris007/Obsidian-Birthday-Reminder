@@ -148,7 +148,8 @@ DOB: 1990-05-20
 5. BRAT 会自动下载并安装
 
 #### 方法二：手动安装：
-1. 从 [Releases](https://github.com/ichris007/Obsidian-Birthday-Reminder/releases/tag/v1.0.0) 下载最新版本的`main.js`、`manifest.json`、
+1. 从 [Releases](https://github.com/ichris007/Obsidian-Birthday-Reminder/releases/tag/v1.0.0) 下载最新版本的`main.js`、`manifest.json`、`styles.css
+`
 2. 解压到 `.obsidian/plugins/birthday-reminder/`
 3. 重启 Obsidian 并启用插件
 
