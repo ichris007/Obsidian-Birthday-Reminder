@@ -66,19 +66,19 @@
 
 不再局限于 `birthday` 属性名！你可以使用任何喜欢的属性名：
 
-#### 4.1.1 方式一：使用默认属性
+**方式一：使用默认属性**
 
 ```
 birthday: 1990-05-20
 ```
 
-#### 4.1.2 方式二：自定义为 date_of_birth
+**方式二：自定义为 date_of_birth**
 
 ```
 date_of_birth: 1990-05-20
 ```
 
-#### 4.1.3 方式三：自定义为 DOB
+**方式三：自定义为 DOB**
 
 ```
 DOB: 1990-05-20
@@ -122,15 +122,14 @@ DOB: 1990-05-20
 
 ### 5.1 主窗口模式（完整布局）
 
-![](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/demo/bd_reminder_fullwide_cn.jpg)
-![](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/demo/bd_reminder_calendar_cn.jpg)
-
+<img src="https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/demo/bd_reminder_fullwide_cn.jpg" width="70%">
+<img src="https://raw.githubusercontent.com/ichris007/Obsidian-Birthday-Reminder/main/demo/bd_reminder_calendar_cn.jpg" width="70%">
 
 ### 5.2 侧边栏模式（紧凑布局）
-![](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/demo/bd_reminder_sidebar_cn.jpg)
+<img src="https://raw.githubusercontent.com/ichris007/Obsidian-Birthday-Reminder/main/demo/bd_reminder_sidebar_cn.jpg" width="70%">
 
 ### 5.3 插件设置
-![](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/demo/bd_reminder_settings_cn.jpg)
+<img src="https://raw.githubusercontent.com/ichris007/Obsidian-Birthday-Reminder/main/demo/bd_reminder_settings_cn.jpg" width="70%">
 
 ## 6 🚀 快速开始
 
