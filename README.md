@@ -1,5 +1,4 @@
-# Obsidian-Birthday-Reminder
-
+# Obsidian-生日提醒
 ## 2 📖 简介
 
 **Birthday Reminder** 是一款为 Obsidian 设计的生日提醒插件，帮助你轻松管理亲朋好友、同事客户的重要生日信息。插件支持公历/农历转换、生肖星座显示、智能日历视图，并自动适配侧边栏和主窗口布局。
