@@ -191,8 +191,7 @@ birthday: 1990-05-20
 
 ## 7 🙏 致谢
 
-- [lunar-javascript](https://github.com/6tail/lunar-javascript) - 农历计算库
-- [solarlunar](https://github.com/6tail/solarlunar) - 公历农历转换
+- [solarlunar](https://www.npmjs.com/package/solarlunar) - 轻量级公历农历转换库，支持 1900-2100 年精确转换，返回农历、生肖、干支、节气等信息
 - [Obsidian](https://obsidian.md/) - 优秀的笔记软件
 
 
