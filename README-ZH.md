@@ -1,6 +1,6 @@
 # Obsidian Birthday Reminder（生日提醒）
 
-[English](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/README-EN.md) | [中文文档](https://github.com/ichris007/Obsidian-Birthday-Reminder)
+[English](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/README.md) | [中文文档](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/README-ZH.md)
 
 ## 1 📖 简介
 
