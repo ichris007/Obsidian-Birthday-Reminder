@@ -1,0 +1,17 @@
+# 依赖
+node_modules/
+
+# 编译输出（可选，main.js 需要上传，但可以不上传 .map 文件）
+*.map
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# 日志
+*.log
+npm-debug.log*

@@ -1,0 +1,447 @@
+/* Birthday Reminder Plugin - 完整样式 */
+
+/* ============================================ */
+/* 基础容器样式 */
+/* ============================================ */
+.birthday-reminder-view {
+  padding: 16px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* ============================================ */
+/* 统计卡片样式 */
+/* ============================================ */
+.birthday-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.birthday-stat-card {
+  padding: 12px;
+  text-align: center;
+  background: var(--background-primary-alt);
+  border-radius: 8px;
+}
+
+.birthday-stat-number {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.birthday-stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ============================================ */
+/* 区域标题样式 */
+/* ============================================ */
+.birthday-section {
+  margin-bottom: 24px;
+}
+
+.birthday-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-normal);
+}
+
+/* ============================================ */
+/* 生日卡片样式 */
+/* ============================================ */
+.birthday-item {
+  padding: 10px 12px;
+  background: var(--background-primary-alt);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.birthday-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.birthday-item-today {
+  border: 1px solid var(--birthday-accent);
+  background: var(--birthday-success);
+}
+
+.birthday-item-warning {
+  border: 1px solid var(--birthday-primary);
+}
+
+.birthday-item-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.birthday-name {
+  font-weight: 500;
+  flex: 2;
+  min-width: 120px;
+}
+
+.birthday-info {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.birthday-date {
+  font-size: 13px;
+  color: var(--text-muted);
+  min-width: 100px;
+}
+
+.birthday-next {
+  font-size: 13px;
+  min-width: 100px;
+  text-align: center;
+}
+
+.birthday-days {
+  font-size: 14px;
+  font-weight: bold;
+  min-width: 70px;
+  text-align: center;
+}
+
+.birthday-age {
+  font-size: 13px;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* ============================================ */
+/* 日历视图样式 */
+/* ============================================ */
+.birthday-calendar {
+  margin-top: 24px;
+}
+
+.birthday-calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.birthday-calendar-month {
+  margin-bottom: 24px;
+}
+
+.birthday-calendar-month-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.birthday-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.birthday-calendar-weekday {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px;
+  color: var(--text-muted);
+}
+
+.birthday-calendar-day {
+  padding: 8px;
+  background: var(--background-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--background-modifier-border);
+  min-height: 70px;
+}
+
+.birthday-calendar-day-other {
+  opacity: 0.6;
+  background: var(--background-primary);
+}
+
+.birthday-calendar-day-today {
+  border: 2px solid var(--birthday-accent);
+}
+
+.birthday-calendar-day-number {
+  font-size: 12px;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.birthday-calendar-day-birthday {
+  font-size: 11px;
+  padding: 2px 4px;
+  background: var(--background-modifier-hover);
+  border-radius: 3px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.birthday-calendar-day-birthday:hover {
+  background: var(--background-modifier-active-hover);
+}
+
+/* ============================================ */
+/* 空状态样式 */
+/* ============================================ */
+.birthday-empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ============================================ */
+/* 按钮样式 */
+/* ============================================ */
+.birthday-button {
+  padding: 4px 12px;
+  cursor: pointer;
+  background: var(--interactive-normal);
+  border: none;
+  border-radius: 4px;
+  color: var(--text-normal);
+}
+
+.birthday-button:hover {
+  background: var(--interactive-hover);
+}
+
+/* 侧边栏紧凑模式样式 */
+.birthday-sidebar-mode {
+  padding: 12px;
+}
+
+/* 侧边栏统计卡片 - 横向排列 */
+.birthday-sidebar-mode .birthday-stats {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.birthday-sidebar-mode .birthday-stats-compact {
+  gap: 6px;
+}
+
+.birthday-sidebar-mode .birthday-stat-card {
+  flex: 1;
+  padding: 8px 4px;
+  text-align: center;
+  background: var(--background-primary-alt);
+  border-radius: 8px;
+  min-width: 0;
+}
+
+.birthday-sidebar-mode .birthday-stat-card-compact {
+  padding: 6px 4px;
+}
+
+.birthday-sidebar-mode .birthday-stat-number {
+  font-size: 18px;
+  font-weight: bold;
+  display: block;
+}
+
+.birthday-sidebar-mode .birthday-stat-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+/* 侧边栏区域 */
+.birthday-sidebar-mode .birthday-section {
+  margin-bottom: 16px;
+}
+
+.birthday-sidebar-mode .birthday-section-title {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* 侧边栏生日卡片 */
+.birthday-sidebar-mode .birthday-item {
+  padding: 6px 8px;
+  margin-bottom: 6px;
+}
+
+.birthday-sidebar-mode .birthday-item-content {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.birthday-sidebar-mode .birthday-name {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.birthday-sidebar-mode .birthday-info {
+  font-size: 10px;
+}
+
+.birthday-sidebar-mode .birthday-date,
+.birthday-sidebar-mode .birthday-next,
+.birthday-sidebar-mode .birthday-days,
+.birthday-sidebar-mode .birthday-age {
+  font-size: 11px;
+}
+
+/* 侧边栏日历 */
+.birthday-sidebar-mode .birthday-calendar-nav h2 {
+  font-size: 16px;
+}
+
+.birthday-sidebar-mode .birthday-calendar-grid {
+  gap: 4px;
+}
+
+.birthday-sidebar-mode .birthday-calendar-weekday {
+  font-size: 10px;
+  padding: 2px;
+}
+
+.birthday-sidebar-mode .birthday-calendar-day {
+  padding: 4px;
+  min-height: 50px;
+}
+
+.birthday-sidebar-mode .birthday-calendar-day-number {
+  font-size: 10px;
+  margin-bottom: 2px;
+}
+
+.birthday-sidebar-mode .birthday-calendar-day-birthday {
+  font-size: 8px;
+  padding: 1px 2px;
+}
+
+.birthday-sidebar-mode .birthday-calendar-month-title {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.birthday-sidebar-mode .birthday-button {
+  padding: 2px 6px;
+  font-size: 11px;
+}
+
+/* 侧边栏模式 - 天数和年龄在同一行 */
+.birthday-sidebar-mode .birthday-days,
+.birthday-sidebar-mode .birthday-age {
+  display: inline-block;
+  font-size: 11px;
+}
+
+.birthday-sidebar-mode .birthday-days {
+  font-weight: bold;
+  color: inherit;
+}
+
+.birthday-sidebar-mode .birthday-age {
+  color: var(--text-muted);
+}
+
+/* ============================================ */
+/* 全窗口模式样式（保持原样，确保大屏幕显示） */
+/* ============================================ */
+.birthday-full-mode .birthday-stats {
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.birthday-full-mode .birthday-stat-card {
+  padding: 12px;
+}
+
+.birthday-full-mode .birthday-stat-number {
+  font-size: 24px;
+}
+
+.birthday-full-mode .birthday-section {
+  margin-bottom: 24px;
+}
+
+.birthday-full-mode .birthday-section-title {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.birthday-full-mode .birthday-item {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.birthday-full-mode .birthday-item-content {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.birthday-full-mode .birthday-name {
+  font-size: inherit;
+}
+
+.birthday-full-mode .birthday-info {
+  font-size: 12px;
+}
+
+.birthday-full-mode .birthday-date,
+.birthday-full-mode .birthday-next {
+  font-size: 13px;
+}
+
+.birthday-full-mode .birthday-days {
+  font-size: 14px;
+}
+
+.birthday-full-mode .birthday-age {
+  font-size: 13px;
+}
+
+.birthday-full-mode .birthday-calendar-day {
+  padding: 8px;
+  min-height: 70px;
+}
+
+.birthday-full-mode .birthday-calendar-day-number {
+  font-size: 12px;
+}
+
+.birthday-full-mode .birthday-calendar-day-birthday {
+  font-size: 11px;
+  padding: 2px 4px;
+}
+
+.birthday-full-mode .birthday-calendar-weekday {
+  font-size: 12px;
+  padding: 4px;
+}
+
+.birthday-full-mode .birthday-calendar-month-title {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.birthday-full-mode .birthday-button {
+  padding: 4px 12px;
+  font-size: inherit;
+}
+
