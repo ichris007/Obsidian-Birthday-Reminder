@@ -1,5 +1,5 @@
 ## 1 📖 Birthday Reminder
-[English](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/README-EN.md) | [中文文档](https://github.com/ichris007/Obsidian-Birthday-Reminder)
+[English](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/README.md) | [中文文档](https://github.com/ichris007/Obsidian-Birthday-Reminder)
 
 An Obsidian plugin designed to help you easily manage important birthday information for friends, family, colleagues, and clients. The plugin supports Gregorian/Lunar calendar conversion, zodiac and Chinese animal sign display, intelligent calendar view, and automatically adapts to sidebar and main window layouts.
 
