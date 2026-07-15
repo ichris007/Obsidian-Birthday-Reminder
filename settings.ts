@@ -196,7 +196,9 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
         dropdown.setValue(this.plugin.settings.language);
         dropdown.onChange((value) => {
           this.plugin.settings.language = value;
-          void this.plugin.saveSettings().then(() => this.display());
+          void this.plugin.saveSettings().then(() => this.display()).catch((error) => {
+            console.error('Failed to save settings:', error);
+          });
         });
       });
 

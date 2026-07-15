@@ -477,7 +477,9 @@ var BirthdayReminderSettingTab = class extends import_obsidian.PluginSettingTab 
       dropdown.setValue(this.plugin.settings.language);
       dropdown.onChange((value) => {
         this.plugin.settings.language = value;
-        void this.plugin.saveSettings().then(() => this.display());
+        void this.plugin.saveSettings().then(() => this.display()).catch((error) => {
+          console.error("Failed to save settings:", error);
+        });
       });
     });
     new import_obsidian.Setting(containerEl).setName(locale.settingsEnableLunar).setDesc(locale.settingsEnableLunarDesc).addToggle((toggle) => toggle.setValue(this.plugin.settings.enableLunar).onChange((value) => {
@@ -695,10 +697,12 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
     this.container.addClass("birthday-reminder-view");
     await this.render();
     this.resizeObserver = new ResizeObserver(() => {
-      this.updateLayoutMode();
+      void this.updateLayoutMode();
     });
     this.resizeObserver.observe(this.container);
-    this.refreshInterval = window.setInterval(() => this.render(), 36e5);
+    this.refreshInterval = window.setInterval(() => {
+      void this.render();
+    }, 36e5);
   }
   async onClose() {
     if (this.refreshInterval) {
@@ -724,11 +728,11 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
     return this.isSidebarMode() ? "birthday-sidebar-mode" : "birthday-full-mode";
   }
   // 更新布局模式
-  updateLayoutMode() {
+  async updateLayoutMode() {
     this.container.removeClass("birthday-sidebar-mode");
     this.container.removeClass("birthday-full-mode");
     this.container.addClass(this.getModeClass());
-    this.render();
+    await this.render();
   }
   async render() {
     this.container.empty();
@@ -1206,7 +1210,7 @@ var BirthdayReminderPlugin = class extends import_obsidian3.Plugin {
       }
     }
     if (leaf) {
-      workspace.revealLeaf(leaf);
+      await workspace.revealLeaf(leaf);
     }
   }
   async loadSettings() {

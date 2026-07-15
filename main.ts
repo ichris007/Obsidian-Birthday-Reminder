@@ -103,7 +103,7 @@ export default class BirthdayReminderPlugin extends Plugin {
 
     // 如果成功获取或创建了 leaf，则显示它
     if (leaf) {
-      workspace.revealLeaf(leaf);
+      await workspace.revealLeaf(leaf);
     }
   }
   

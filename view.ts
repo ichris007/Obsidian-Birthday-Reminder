@@ -61,12 +61,14 @@ export class BirthdayReminderView extends ItemView {
     
     // 添加窗口大小变化监听
     this.resizeObserver = new ResizeObserver(() => {
-      this.updateLayoutMode();
+      void this.updateLayoutMode();
     });
     this.resizeObserver.observe(this.container);
-    
+
     // 每小时刷新一次
-    this.refreshInterval = window.setInterval(() => this.render(), 3600000);
+    this.refreshInterval = window.setInterval(() => {
+      void this.render();
+    }, 3600000);
   }
 
   async onClose(): Promise<void> {
@@ -96,15 +98,15 @@ export class BirthdayReminderView extends ItemView {
   }
   
   // 更新布局模式
-  updateLayoutMode() {
+  async updateLayoutMode(): Promise<void> {
     // 移除旧的模式类
     this.container.removeClass('birthday-sidebar-mode');
     this.container.removeClass('birthday-full-mode');
     // 添加新的模式类
     this.container.addClass(this.getModeClass());
-    
+
     // 重新渲染以适应新布局
-    this.render();
+    await this.render();
   }
 
   async render() {
@@ -139,13 +141,13 @@ export class BirthdayReminderView extends ItemView {
       const cache = this.app.metadataCache.getFileCache(file);
       if (!cache) continue;
 
-      const frontmatter = cache.frontmatter as Record<string, unknown> | undefined;
+      const frontmatter = cache.frontmatter;
       if (!frontmatter) continue;
 
       const birthday = frontmatter[birthdayProp];
       if (typeof birthday !== 'string' && !(birthday instanceof Date)) continue;
 
-      const birthDate = birthday instanceof Date ? birthday : new Date(birthday as string);
+      const birthDate = birthday instanceof Date ? birthday : new Date(birthday);
       if (isNaN(birthDate.getTime())) continue;
 
       // 检查路径
