@@ -336,7 +336,7 @@ export class BirthdayReminderView extends ItemView {
       }
       
       itemEl.addEventListener('click', () => {
-        this.app.workspace.openLinkText(item.path, '', false);
+        void this.app.workspace.openLinkText(item.path, '', false);
       });
       
       const content = itemEl.createDiv({ cls: 'birthday-item-content' });
@@ -375,9 +375,9 @@ export class BirthdayReminderView extends ItemView {
       
       if (!isSidebar) {
         // 全窗口模式：创建独立元素
-        const birthdaySpan = content.createSpan({ cls: 'birthday-date', text: `${locale.birthdayLabel}：${item.birthday}` });
+        content.createSpan({ cls: 'birthday-date', text: `${locale.birthdayLabel}：${item.birthday}` });
 
-        const nextSpan = content.createSpan({ cls: 'birthday-next', text: `${locale.nextBirthdayLabel}：${item.nextBirthday}` });
+        content.createSpan({ cls: 'birthday-next', text: `${locale.nextBirthdayLabel}：${item.nextBirthday}` });
 
         const daysSpan = content.createSpan({ cls: 'birthday-days' });
         if (item.daysRemaining <= 7) {
@@ -387,12 +387,12 @@ export class BirthdayReminderView extends ItemView {
 
         // 年龄显示 - 根据语言显示单位
         const ageText = isEnglish ? `${item.age} ${locale.ageUnitEn}` : `${item.age}${locale.ageUnit}`;
-        const ageSpan = content.createSpan({ cls: 'birthday-age', text: ageText });
+        content.createSpan({ cls: 'birthday-age', text: ageText });
       } else {
         // 侧边栏模式：创建行容器
         const dateRow = content.createDiv({ cls: 'birthday-date-row' });
-        const birthdaySpan = dateRow.createSpan({ cls: 'birthday-date', text: `${locale.birthdayLabel}：${item.birthday}` });
-        const nextSpan = dateRow.createSpan({ cls: 'birthday-next', text: `${locale.nextBirthdayLabel}：${item.nextBirthday}` });
+        dateRow.createSpan({ cls: 'birthday-date', text: `${locale.birthdayLabel}：${item.birthday}` });
+        dateRow.createSpan({ cls: 'birthday-next', text: `${locale.nextBirthdayLabel}：${item.nextBirthday}` });
 
         // 创建天数和年龄的行容器
         const daysAgeRow = content.createDiv({ cls: 'birthday-days-age-row' });
@@ -404,7 +404,7 @@ export class BirthdayReminderView extends ItemView {
 
         // 年龄显示 - 根据语言显示单位
         const ageText = isEnglish ? `${item.age} ${locale.ageUnitEn}` : `${item.age}${locale.ageUnit}`;
-        const ageSpan = daysAgeRow.createSpan({ cls: 'birthday-age', text: ageText });
+        daysAgeRow.createSpan({ cls: 'birthday-age', text: ageText });
       }
     }
   }
@@ -509,7 +509,7 @@ export class BirthdayReminderView extends ItemView {
             }
             birthdayEl.addEventListener('click', (e) => {
               e.stopPropagation();
-              this.app.workspace.openLinkText(b.path, '', false);
+              void this.app.workspace.openLinkText(b.path, '', false);
             });
           }
         }
@@ -541,7 +541,7 @@ export class BirthdayReminderView extends ItemView {
             birthdayEl.setText(`🎂 ${b.name}`);
             birthdayEl.addEventListener('click', (e) => {
               e.stopPropagation();
-              this.app.workspace.openLinkText(b.path, '', false);
+              void this.app.workspace.openLinkText(b.path, '', false);
             });
           }
 
@@ -587,7 +587,7 @@ export class BirthdayReminderView extends ItemView {
               }
               birthdayEl.addEventListener('click', (e) => {
                 e.stopPropagation();
-                this.app.workspace.openLinkText(b.path, '', false);
+                void this.app.workspace.openLinkText(b.path, '', false);
               });
             }
           }

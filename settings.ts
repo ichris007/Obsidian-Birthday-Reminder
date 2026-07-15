@@ -113,9 +113,9 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       .addText(text => text
         .setPlaceholder(locale.settingsTargetPathPlaceholder)
         .setValue(this.plugin.settings.targetPath)
-        .onChange(async (value) => {
+        .onChange((value) => {
           this.plugin.settings.targetPath = value;
-          await this.plugin.saveSettings();
+          void this.plugin.saveSettings();
         }));
 
     new Setting(containerEl)
@@ -124,10 +124,10 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       .addText(text => text
         .setPlaceholder(locale.settingsBirthdayPropertyPlaceholder)
         .setValue(this.plugin.settings.birthdayProperty)
-        .onChange(async (value) => {
+        .onChange((value) => {
           const newValue = value.trim();
           this.plugin.settings.birthdayProperty = newValue || 'birthday';
-          await this.plugin.saveSettings();
+          void this.plugin.saveSettings();
         }));
 
     // 添加提示示例
@@ -150,9 +150,9 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       .addSlider(slider => slider
         .setLimits(1, 6, 1)
         .setValue(this.plugin.settings.visibleMonths)
-        .onChange(async (value) => {
+        .onChange((value) => {
           this.plugin.settings.visibleMonths = value;
-          await this.plugin.saveSettings();
+          void this.plugin.saveSettings();
         }));
 
     new Setting(containerEl)
@@ -160,18 +160,17 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       .setDesc(locale.settingsColorSchemeDesc)
       .addDropdown(dropdown => {
         Object.entries(COLOR_SCHEMES).forEach(([key, scheme]) => {
-          dropdown.addOption(key, this.getColorSchemeName(key));
+          dropdown.addOption(key as string, this.getColorSchemeName(key));
         });
         dropdown.setValue(this.plugin.settings.colorScheme);
-        dropdown.onChange(async (value) => {
+        dropdown.onChange((value) => {
           this.plugin.settings.colorScheme = value;
-          await this.plugin.saveSettings();
+          void this.plugin.saveSettings();
           this.display();
         });
       });
 
     // 预览配色 - 使用 CSS 类
-    const scheme = COLOR_SCHEMES[this.plugin.settings.colorScheme];
     const previewEl = containerEl.createDiv({ cls: 'birthday-color-preview-box' });
 
     const previewRow1 = previewEl.createDiv({ cls: 'birthday-color-preview-row' });
@@ -195,10 +194,9 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
         dropdown.addOption('zh-cn', '中文');
         dropdown.addOption('en-us', 'English');
         dropdown.setValue(this.plugin.settings.language);
-        dropdown.onChange(async (value) => {
+        dropdown.onChange((value) => {
           this.plugin.settings.language = value;
-          await this.plugin.saveSettings();
-          this.display();
+          void this.plugin.saveSettings().then(() => this.display());
         });
       });
 
@@ -207,9 +205,9 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       .setDesc(locale.settingsEnableLunarDesc)
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.enableLunar)
-        .onChange(async (value) => {
+        .onChange((value) => {
           this.plugin.settings.enableLunar = value;
-          await this.plugin.saveSettings();
+          void this.plugin.saveSettings();
         }));
 
     new Setting(containerEl)
@@ -217,9 +215,9 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       .setDesc(locale.settingsEnableZodiacDesc)
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.enableZodiac)
-        .onChange(async (value) => {
+        .onChange((value) => {
           this.plugin.settings.enableZodiac = value;
-          await this.plugin.saveSettings();
+          void this.plugin.saveSettings();
         }));
 
     new Setting(containerEl)
@@ -227,9 +225,9 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       .setDesc(locale.settingsEnableCalendarDesc)
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.enableCalendar)
-        .onChange(async (value) => {
+        .onChange((value) => {
           this.plugin.settings.enableCalendar = value;
-          await this.plugin.saveSettings();
+          void this.plugin.saveSettings();
         }));
 
     new Setting(containerEl)
@@ -237,9 +235,9 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       .setDesc(locale.settingsShowStatisticsDesc)
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.showStatistics)
-        .onChange(async (value) => {
+        .onChange((value) => {
           this.plugin.settings.showStatistics = value;
-          await this.plugin.saveSettings();
+          void this.plugin.saveSettings();
         }));
 
     new Setting(containerEl)
@@ -247,9 +245,9 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       .setDesc(locale.settingsHighlightTodayDesc)
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.highlightToday)
-        .onChange(async (value) => {
+        .onChange((value) => {
           this.plugin.settings.highlightToday = value;
-          await this.plugin.saveSettings();
+          void this.plugin.saveSettings();
         }));
   }
 }

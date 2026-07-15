@@ -18,14 +18,14 @@ export default class BirthdayReminderPlugin extends Plugin {
 
     // 添加 ribbon 图标
     this.addRibbonIcon('cake', '生日提醒', () => {
-      this.activateView();
+      void this.activateView();
     });
 
     // 添加命令 - 使用简短 ID，不包含插件名
     this.addCommand({
       id: 'show',
       name: '显示生日提醒面板',
-      callback: () => this.activateView()
+      callback: () => void this.activateView()
     });
 
     // 添加设置选项卡
@@ -62,8 +62,8 @@ export default class BirthdayReminderPlugin extends Plugin {
     // 监听文件修改（frontmatter 变化）
     vault.on('modify', (file) => {
       if (file instanceof TFile && file.path.endsWith('.md')) {
-        // 使用微延迟避免频繁刷新
-        setTimeout(() => this.refreshAllViews(), 100);
+        // 使用微延迟避免频繁刷新 - 使用 window.setTimeout 以保证弹出窗口兼容性
+        void window.setTimeout(() => this.refreshAllViews(), 100);
       }
     });
   }
@@ -108,7 +108,8 @@ export default class BirthdayReminderPlugin extends Plugin {
   }
   
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const data = await this.loadData();
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, data as BirthdayReminderSettings);
   }
 
   async saveSettings(): Promise<void> {
