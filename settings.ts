@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
+import { App, PluginSettingTab, Setting, SettingDef } from 'obsidian';
 import BirthdayReminderPlugin from './main';
 import { getLocale, Language, LocaleMessages } from './locales';
 
@@ -86,170 +86,183 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
     return getLocale(this.plugin.settings.language as Language);
   }
 
-  private getColorSchemeName(key: string): string {
+  private getColorSchemeName(key: keyof typeof COLOR_SCHEMES): string {
     const locale = this.getLocale();
-    const names: Record<string, string> = {
+    const names: Record<keyof typeof COLOR_SCHEMES, string> = {
       default: locale.colorSchemeDefault,
       warm: locale.colorSchemeWarm,
       cool: locale.colorSchemeCool,
       nature: locale.colorSchemeNature,
       purple: locale.colorSchemePurple,
     };
-    return names[key] || key;
+    return names[key] ?? key;
   }
 
-  display(): void {
-    const { containerEl } = this;
-    containerEl.empty();
+  async getSettingDefinitions(): Promise<SettingDef[]> {
     const locale = this.getLocale();
+    const settings = this.plugin.settings;
 
-    new Setting(containerEl)
-      .setName(locale.settingsTitle)
-      .setHeading();
+    const definitions: SettingDef[] = [];
 
-    new Setting(containerEl)
-      .setName(locale.settingsTargetPath)
-      .setDesc(locale.settingsTargetPathDesc)
-      .addText(text => text
-        .setPlaceholder(locale.settingsTargetPathPlaceholder)
-        .setValue(this.plugin.settings.targetPath)
-        .onChange((value) => {
-          this.plugin.settings.targetPath = value;
+    // Header
+    definitions.push({
+      type: 'header',
+      name: locale.settingsTitle,
+    });
+
+    // Target Path
+    definitions.push({
+      type: 'text',
+      name: locale.settingsTargetPath,
+      description: locale.settingsTargetPathDesc,
+      value: settings.targetPath,
+      placeholder: locale.settingsTargetPathPlaceholder,
+      onChange: (value: string) => {
+        settings.targetPath = value;
+        void this.plugin.saveSettings();
+      },
+    });
+
+    // Birthday Property
+    definitions.push({
+      type: 'text',
+      name: locale.settingsBirthdayProperty,
+      description: locale.settingsBirthdayPropertyDesc,
+      value: settings.birthdayProperty,
+      placeholder: locale.settingsBirthdayPropertyPlaceholder,
+      onChange: (value: string) => {
+        const newValue = value.trim();
+        settings.birthdayProperty = newValue || 'birthday';
+        void this.plugin.saveSettings();
+      },
+    });
+
+    // Birthday Property Examples (container)
+    definitions.push({
+      type: 'container',
+      name: () => {
+        const exampleEl = document.createElement('div');
+        exampleEl.className = 'setting-item-description';
+        const exampleText1 = document.createElement('span');
+        exampleText1.textContent = `${locale.settingsBirthdayPropertyDesc} `;
+        const code1 = document.createElement('span');
+        code1.className = 'code-example';
+        code1.textContent = `${locale.settingsBirthdayPropertyPlaceholder}: 1990-05-20`;
+        const exampleText2 = document.createElement('span');
+        exampleText2.textContent = ` - date_of_birth: `;
+        const code2 = document.createElement('span');
+        code2.className = 'code-example';
+        code2.textContent = `date_of_birth: 1990-05-20`;
+        exampleEl.append(exampleText1, code1, exampleText2, code2);
+        return exampleEl;
+      },
+    });
+
+    // Visible Months
+    definitions.push({
+      type: 'slider',
+      name: locale.settingsVisibleMonths,
+      description: locale.settingsVisibleMonthsDesc,
+      value: settings.visibleMonths,
+      min: 1,
+      max: 6,
+      step: 1,
+      onChange: (value: number) => {
+        settings.visibleMonths = value;
+        void this.plugin.saveSettings();
+      },
+    });
+
+    // Color Scheme
+    definitions.push({
+      type: 'dropdown',
+      name: locale.settingsColorScheme,
+      description: locale.settingsColorSchemeDesc,
+      value: settings.colorScheme,
+      options: Object.entries(COLOR_SCHEMES).map(([key, scheme]) => ({
+        value: key,
+        label: this.getColorSchemeName(key as keyof typeof COLOR_SCHEMES),
+      })),
+      onChange: (value: string) => {
+        settings.colorScheme = value;
+        void this.plugin.saveSettings();
+      },
+    });
+
+    // Color Preview
+    definitions.push({
+      type: 'container',
+      name: () => {
+        const previewEl = document.createElement('div');
+        previewEl.className = 'birthday-color-preview-box';
+
+        const row1 = previewEl.appendChild(document.createElement('div'));
+        row1.className = 'birthday-color-preview-row';
+
+        const primary = row1.appendChild(document.createElement('span'));
+        primary.className = 'birthday-color-preview-primary';
+        primary.textContent = locale.colorSchemeDefault;
+        const secondary = row1.appendChild(document.createElement('span'));
+        secondary.className = 'birthday-color-preview-secondary';
+        secondary.textContent = locale.colorSchemeDefault;
+        const accent = row1.appendChild(document.createElement('span'));
+        accent.className = 'birthday-color-preview-accent';
+        accent.textContent = locale.colorSchemeDefault;
+
+        const warning = previewEl.appendChild(document.createElement('div'));
+        warning.className = 'birthday-color-preview-warning';
+        warning.textContent = locale.colorSchemeDefault;
+
+        const success = previewEl.appendChild(document.createElement('div'));
+        success.className = 'birthday-color-preview-success';
+        success.textContent = locale.colorSchemeDefault;
+
+        return previewEl;
+      },
+    });
+
+    // Language
+    definitions.push({
+      type: 'dropdown',
+      name: locale.settingsLanguage,
+      description: locale.settingsLanguageDesc,
+      value: settings.language,
+      options: [
+        { value: 'zh-cn', label: '中文' },
+        { value: 'en-us', label: 'English' },
+      ],
+      onChange: async (value: string) => {
+        settings.language = value;
+        try {
+          await this.plugin.saveSettings();
+        } catch (error) {
+          console.error('Failed to save settings:', error);
+        }
+      },
+    });
+
+    // Toggles
+    const toggles = [
+      { key: 'enableLunar', name: locale.settingsEnableLunar, desc: locale.settingsEnableLunarDesc },
+      { key: 'enableZodiac', name: locale.settingsEnableZodiac, desc: locale.settingsEnableZodiacDesc },
+      { key: 'enableCalendar', name: locale.settingsEnableCalendar, desc: locale.settingsEnableCalendarDesc },
+      { key: 'showStatistics', name: locale.settingsShowStatistics, desc: locale.settingsShowStatisticsDesc },
+      { key: 'highlightToday', name: locale.settingsHighlightToday, desc: locale.settingsHighlightTodayDesc },
+    ] as const;
+
+    for (const { key, name, desc } of toggles) {
+      definitions.push({
+        type: 'toggle',
+        name,
+        description: desc,
+        value: settings[key],
+        onChange: (value: boolean) => {
+          settings[key] = value;
           void this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName(locale.settingsBirthdayProperty)
-      .setDesc(locale.settingsBirthdayPropertyDesc)
-      .addText(text => text
-        .setPlaceholder(locale.settingsBirthdayPropertyPlaceholder)
-        .setValue(this.plugin.settings.birthdayProperty)
-        .onChange((value) => {
-          const newValue = value.trim();
-          this.plugin.settings.birthdayProperty = newValue || 'birthday';
-          void this.plugin.saveSettings();
-        }));
-
-    // 添加提示示例
-    const exampleEl = containerEl.createDiv({ cls: 'setting-item-description' });
-    const exampleText1 = exampleEl.createSpan();
-    exampleText1.setText(`${locale.settingsBirthdayPropertyDesc} `);
-
-    const code1 = exampleEl.createSpan({ cls: 'code-example' });
-    code1.setText(`${locale.settingsBirthdayPropertyPlaceholder}: 1990-05-20`);
-
-    const exampleText2 = exampleEl.createSpan();
-    exampleText2.setText(` - date_of_birth: `);
-
-    const code2 = exampleEl.createSpan({ cls: 'code-example' });
-    code2.setText(`date_of_birth: 1990-05-20`);
-
-    new Setting(containerEl)
-      .setName(locale.settingsVisibleMonths)
-      .setDesc(locale.settingsVisibleMonthsDesc)
-      .addSlider(slider => slider
-        .setLimits(1, 6, 1)
-        .setValue(this.plugin.settings.visibleMonths)
-        .onChange((value) => {
-          this.plugin.settings.visibleMonths = value;
-          void this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName(locale.settingsColorScheme)
-      .setDesc(locale.settingsColorSchemeDesc)
-      .addDropdown(dropdown => {
-        Object.entries(COLOR_SCHEMES).forEach(([key, scheme]) => {
-          dropdown.addOption(key as string, this.getColorSchemeName(key));
-        });
-        dropdown.setValue(this.plugin.settings.colorScheme);
-        dropdown.onChange((value) => {
-          this.plugin.settings.colorScheme = value;
-          void this.plugin.saveSettings();
-          this.display();
-        });
+        },
       });
+    }
 
-    // 预览配色 - 使用 CSS 类
-    const previewEl = containerEl.createDiv({ cls: 'birthday-color-preview-box' });
-
-    const previewRow1 = previewEl.createDiv({ cls: 'birthday-color-preview-row' });
-    const primarySpan = previewRow1.createSpan({ cls: 'birthday-color-preview-primary' });
-    primarySpan.setText(locale.colorSchemeDefault);
-    const secondarySpan = previewRow1.createSpan({ cls: 'birthday-color-preview-secondary' });
-    secondarySpan.setText(locale.colorSchemeDefault);
-    const accentSpan = previewRow1.createSpan({ cls: 'birthday-color-preview-accent' });
-    accentSpan.setText(locale.colorSchemeDefault);
-
-    const warningDiv = previewEl.createDiv({ cls: 'birthday-color-preview-warning' });
-    warningDiv.setText(locale.colorSchemeDefault);
-
-    const successDiv = previewEl.createDiv({ cls: 'birthday-color-preview-success' });
-    successDiv.setText(locale.colorSchemeDefault);
-
-    new Setting(containerEl)
-      .setName(locale.settingsLanguage)
-      .setDesc(locale.settingsLanguageDesc)
-      .addDropdown(dropdown => {
-        dropdown.addOption('zh-cn', '中文');
-        dropdown.addOption('en-us', 'English');
-        dropdown.setValue(this.plugin.settings.language);
-        dropdown.onChange((value) => {
-          this.plugin.settings.language = value;
-          void this.plugin.saveSettings().then(() => this.display()).catch((error) => {
-            console.error('Failed to save settings:', error);
-          });
-        });
-      });
-
-    new Setting(containerEl)
-      .setName(locale.settingsEnableLunar)
-      .setDesc(locale.settingsEnableLunarDesc)
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.enableLunar)
-        .onChange((value) => {
-          this.plugin.settings.enableLunar = value;
-          void this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName(locale.settingsEnableZodiac)
-      .setDesc(locale.settingsEnableZodiacDesc)
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.enableZodiac)
-        .onChange((value) => {
-          this.plugin.settings.enableZodiac = value;
-          void this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName(locale.settingsEnableCalendar)
-      .setDesc(locale.settingsEnableCalendarDesc)
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.enableCalendar)
-        .onChange((value) => {
-          this.plugin.settings.enableCalendar = value;
-          void this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName(locale.settingsShowStatistics)
-      .setDesc(locale.settingsShowStatisticsDesc)
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.showStatistics)
-        .onChange((value) => {
-          this.plugin.settings.showStatistics = value;
-          void this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName(locale.settingsHighlightToday)
-      .setDesc(locale.settingsHighlightTodayDesc)
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.highlightToday)
-        .onChange((value) => {
-          this.plugin.settings.highlightToday = value;
-          void this.plugin.saveSettings();
-        }));
+    return definitions;
   }
 }

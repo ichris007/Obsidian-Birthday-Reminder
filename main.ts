@@ -109,7 +109,7 @@ export default class BirthdayReminderPlugin extends Plugin {
   
   async loadSettings(): Promise<void> {
     const data = await this.loadData();
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, data as BirthdayReminderSettings);
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, data ?? {}) as BirthdayReminderSettings;
   }
 
   async saveSettings(): Promise<void> {

@@ -141,13 +141,18 @@ export class BirthdayReminderView extends ItemView {
       const cache = this.app.metadataCache.getFileCache(file);
       if (!cache) continue;
 
-      const frontmatter = cache.frontmatter;
+      const frontmatter = cache.frontmatter as Record<string, unknown>;
       if (!frontmatter) continue;
 
       const birthday = frontmatter[birthdayProp];
-      if (typeof birthday !== 'string' && !(birthday instanceof Date)) continue;
-
-      const birthDate = birthday instanceof Date ? birthday : new Date(birthday);
+      let birthDate: Date | null = null;
+      if (typeof birthday === 'string') {
+        birthDate = new Date(birthday);
+      } else if (birthday instanceof Date) {
+        birthDate = birthday;
+      } else {
+        continue;
+      }
       if (isNaN(birthDate.getTime())) continue;
 
       // 检查路径
@@ -338,7 +343,7 @@ export class BirthdayReminderView extends ItemView {
       }
       
       itemEl.addEventListener('click', () => {
-        void this.app.workspace.openLinkText(item.path, '', false);
+        void this.app.workspace.openLinkText(item.path, null, false);
       });
       
       const content = itemEl.createDiv({ cls: 'birthday-item-content' });

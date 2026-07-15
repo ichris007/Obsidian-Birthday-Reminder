@@ -223,8 +223,8 @@ MIT License
 
 ## 9 🔗 Links
 
-- [GitHub Repository](https://github.com/yourname/obsidian-birthday-reminder)
-- [Issue Tracker](https://github.com/yourname/obsidian-birthday-reminder/issues)
+- [GitHub Repository](https://github.com/ichris007/Obsidian-Birthday-Reminder)
+- [Issue Tracker](https://github.com/ichris007/Obsidian-Birthday-Reminder/issues)
 
 ---
 

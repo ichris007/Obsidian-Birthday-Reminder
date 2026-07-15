@@ -1,8 +1,8 @@
 {
   "id": "birthday-reminder",
   "name": "Birthday Reminder",
-  "version": "1.3.1",
-  "minAppVersion": "1.4.0",
+  "version": "1.4.0",
+  "minAppVersion": "1.13.0",
   "description": "Show contact's birthday reminder, support Gregorian/Lunar calendar conversion, astrological sign and zodiac sign, calendar view.",
   "author": "ichris007",
   "authorUrl": "https://github.com/ichris007",
