@@ -1,0 +1,48 @@
+name: Release Plugin
+
+on:
+  push:
+    tags:
+      - "*" # 只要你推送任何 tag（如 1.0.1），就会触发
+
+permissions:
+  contents: write    # 允许 Action 创建 Release 并上传文件
+  id-token: write    # 允许 Action 生成安全证明凭证（关键）
+  attestations: write # 允许 Action 写入证明（关键）
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install & Build
+        run: |
+          npm install
+          npm run build # 确保这步会在根目录生成 main.js 和 styles.css
+
+      # 🌟 自动生成合规的安全证明
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
+
+      # 🌟 自动创建 Release 并上传这三个文件
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            main.js
+            manifest.json
+            styles.css
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

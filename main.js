@@ -425,7 +425,7 @@ var BirthdayReminderSettingTab = class extends import_obsidian.PluginSettingTab 
     const { containerEl } = this;
     containerEl.empty();
     const locale = this.getLocale();
-    containerEl.createEl("h2", { text: locale.settingsTitle });
+    new import_obsidian.Setting(containerEl).setName(locale.settingsTitle).setHeading();
     new import_obsidian.Setting(containerEl).setName(locale.settingsTargetPath).setDesc(locale.settingsTargetPathDesc).addText((text) => text.setPlaceholder(locale.settingsTargetPathPlaceholder).setValue(this.plugin.settings.targetPath).onChange(async (value) => {
       this.plugin.settings.targetPath = value;
       await this.plugin.saveSettings();
@@ -436,15 +436,15 @@ var BirthdayReminderSettingTab = class extends import_obsidian.PluginSettingTab 
       await this.plugin.saveSettings();
     }));
     const exampleEl = containerEl.createDiv({ cls: "setting-item-description" });
-    exampleEl.style.marginBottom = "16px";
-    exampleEl.style.fontSize = "12px";
-    exampleEl.style.color = "var(--text-muted)";
-    exampleEl.innerHTML = `
-      \u{1F4A1} ${locale.settingsBirthdayPropertyDesc}<br>
-      - ${locale.settingsBirthdayPropertyPlaceholder}: <code>birthday: 1990-05-20</code><br>
-      - date_of_birth: <code>date_of_birth: 1990-05-20</code>
-    `;
-    new import_obsidian.Setting(containerEl).setName(locale.settingsVisibleMonths).setDesc(locale.settingsVisibleMonthsDesc).addSlider((slider) => slider.setLimits(1, 6, 1).setValue(this.plugin.settings.visibleMonths).setDynamicTooltip().onChange(async (value) => {
+    const exampleText1 = exampleEl.createSpan();
+    exampleText1.setText(`${locale.settingsBirthdayPropertyDesc} `);
+    const code1 = exampleEl.createSpan({ cls: "code-example" });
+    code1.setText(`${locale.settingsBirthdayPropertyPlaceholder}: 1990-05-20`);
+    const exampleText2 = exampleEl.createSpan();
+    exampleText2.setText(` - date_of_birth: `);
+    const code2 = exampleEl.createSpan({ cls: "code-example" });
+    code2.setText(`date_of_birth: 1990-05-20`);
+    new import_obsidian.Setting(containerEl).setName(locale.settingsVisibleMonths).setDesc(locale.settingsVisibleMonthsDesc).addSlider((slider) => slider.setLimits(1, 6, 1).setValue(this.plugin.settings.visibleMonths).onChange(async (value) => {
       this.plugin.settings.visibleMonths = value;
       await this.plugin.saveSettings();
     }));
@@ -460,23 +460,18 @@ var BirthdayReminderSettingTab = class extends import_obsidian.PluginSettingTab 
       });
     });
     const scheme = COLOR_SCHEMES[this.plugin.settings.colorScheme];
-    const previewEl = containerEl.createDiv({ cls: "birthday-color-preview" });
-    previewEl.style.cssText = `
-      margin: 16px 0;
-      padding: 12px;
-      background: var(--background-primary);
-      border-radius: 8px;
-      border: 1px solid var(--background-modifier-border);
-    `;
-    previewEl.innerHTML = `
-      <div style="display: flex; gap: 12px; margin-bottom: 8px;">
-        <span style="background: ${scheme.primary}; color: white; padding: 2px 8px; border-radius: 4px;">${locale.colorSchemeDefault}</span>
-        <span style="background: ${scheme.secondary}; padding: 2px 8px; border-radius: 4px;">${locale.colorSchemeDefault}</span>
-        <span style="color: ${scheme.accent}; font-weight: bold;">${locale.colorSchemeDefault}</span>
-      </div>
-      <div style="background: ${scheme.warning}; padding: 4px; border-radius: 4px;">${locale.colorSchemeDefault}</div>
-      <div style="background: ${scheme.success}; padding: 4px; border-radius: 4px; margin-top: 4px;">${locale.colorSchemeDefault}</div>
-    `;
+    const previewEl = containerEl.createDiv({ cls: "birthday-color-preview-box" });
+    const previewRow1 = previewEl.createDiv({ cls: "birthday-color-preview-row" });
+    const primarySpan = previewRow1.createSpan({ cls: "birthday-color-preview-primary" });
+    primarySpan.setText(locale.colorSchemeDefault);
+    const secondarySpan = previewRow1.createSpan({ cls: "birthday-color-preview-secondary" });
+    secondarySpan.setText(locale.colorSchemeDefault);
+    const accentSpan = previewRow1.createSpan({ cls: "birthday-color-preview-accent" });
+    accentSpan.setText(locale.colorSchemeDefault);
+    const warningDiv = previewEl.createDiv({ cls: "birthday-color-preview-warning" });
+    warningDiv.setText(locale.colorSchemeDefault);
+    const successDiv = previewEl.createDiv({ cls: "birthday-color-preview-success" });
+    successDiv.setText(locale.colorSchemeDefault);
     new import_obsidian.Setting(containerEl).setName(locale.settingsLanguage).setDesc(locale.settingsLanguageDesc).addDropdown((dropdown) => {
       dropdown.addOption("zh-cn", "\u4E2D\u6587");
       dropdown.addOption("en-us", "English");
@@ -709,14 +704,16 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
   }
   async onClose() {
     if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
+      window.clearInterval(this.refreshInterval);
     }
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
   }
   refresh() {
-    this.render();
+    this.render().catch((error) => {
+      console.error("Failed to refresh birthday view:", error);
+    });
   }
   // 检测是否为侧边栏模式（宽度小于450px认为是侧边栏）
   isSidebarMode() {
@@ -756,14 +753,18 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
     today.setHours(0, 0, 0, 0);
     for (const file of files) {
       const cache = this.app.metadataCache.getFileCache(file);
-      const frontmatter = cache == null ? void 0 : cache.frontmatter;
-      const birthday = frontmatter == null ? void 0 : frontmatter[birthdayProp];
-      if (!birthday)
+      if (!cache)
+        continue;
+      const frontmatter = cache.frontmatter;
+      if (!frontmatter)
+        continue;
+      const birthday = frontmatter[birthdayProp];
+      if (typeof birthday !== "string" && !(birthday instanceof Date))
+        continue;
+      const birthDate = birthday instanceof Date ? birthday : new Date(birthday);
+      if (isNaN(birthDate.getTime()))
         continue;
       if (settings.targetPath && !file.path.startsWith(settings.targetPath))
-        continue;
-      const birthDate = new Date(birthday);
-      if (isNaN(birthDate.getTime()))
         continue;
       const currentYear = today.getFullYear();
       let nextBirthday = new Date(currentYear, birthDate.getMonth(), birthDate.getDate());
@@ -775,12 +776,14 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
       let lunarInfo = null;
       if (settings.enableLunar) {
         const lunar = solarToLunar(birthDate, currentLanguage);
-        if (isEnglish) {
-          lunarInfo = `${lunar.monthName} ${lunar.dayName}`;
-        } else {
-          lunarInfo = `${lunar.monthName}\u6708${lunar.dayName}`;
-          if (lunar.isLeap)
-            lunarInfo = `\u95F0${lunarInfo}`;
+        if (lunar) {
+          if (isEnglish) {
+            lunarInfo = `${lunar.monthName} ${lunar.dayName}`;
+          } else {
+            lunarInfo = `${lunar.monthName}\u6708${lunar.dayName}`;
+            if (lunar.isLeap)
+              lunarInfo = `\u95F0${lunarInfo}`;
+          }
         }
       }
       let animal = null;
@@ -794,7 +797,7 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
       birthdayData.push({
         name: file.name.replace(/\.md$/, ""),
         path: file.path,
-        birthday,
+        birthday: birthDate.toISOString().split("T")[0],
         nextBirthday: `${nextBirthday.getFullYear()}-${String(nextBirthday.getMonth() + 1).padStart(2, "0")}-${String(nextBirthday.getDate()).padStart(2, "0")}`,
         daysRemaining,
         age,
@@ -862,7 +865,7 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
       }
       const numSpan = card.createSpan({ cls: "birthday-stat-number" });
       if (stat.accent) {
-        numSpan.style.color = "var(--birthday-accent)";
+        numSpan.addClass("birthday-stat-number-accent");
       }
       numSpan.setText(String(stat.number));
       const labelSpan = card.createDiv({ cls: "birthday-stat-label" });
@@ -896,14 +899,12 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
     }
     const titleEl = section.createEl("h2", { cls: "birthday-section-title", text: titleText });
     if (isSidebar) {
-      titleEl.style.fontSize = "14px";
-      titleEl.style.marginBottom = "8px";
+      titleEl.addClass("birthday-section-title-compact");
     }
     for (const item of items) {
       const itemEl = section.createDiv({ cls: "birthday-item" });
       if (isSidebar) {
         itemEl.addClass("birthday-item-compact");
-        itemEl.style.padding = "6px 8px";
       }
       if (item.isToday && this.plugin.settings.highlightToday) {
         itemEl.addClass("birthday-item-today");
@@ -915,25 +916,16 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
       });
       const content = itemEl.createDiv({ cls: "birthday-item-content" });
       if (isSidebar) {
-        content.style.flexDirection = "column";
-        content.style.alignItems = "flex-start";
-        content.style.gap = "4px";
+        content.addClass("birthday-item-content-compact");
       } else {
-        content.style.display = "flex";
-        content.style.flexDirection = "row";
-        content.style.alignItems = "center";
-        content.style.justifyContent = "space-between";
-        content.style.flexWrap = "wrap";
-        content.style.gap = "12px";
+        content.addClass("birthday-item-content-full");
       }
       const nameDiv = content.createDiv({ cls: "birthday-name" });
       nameDiv.createSpan({ text: item.name });
       if (isSidebar) {
-        nameDiv.style.fontWeight = "bold";
-        nameDiv.style.fontSize = "13px";
+        nameDiv.addClass("birthday-name-compact");
       } else {
-        nameDiv.style.minWidth = "120px";
-        nameDiv.style.flex = "2";
+        nameDiv.addClass("birthday-name-full");
       }
       if (showExtra && (item.animal || item.zodiac || item.lunarInfo)) {
         const infoDiv = nameDiv.createDiv({ cls: "birthday-info" });
@@ -950,48 +942,29 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
           }
         }
         infoDiv.setText(infoParts.join(" \xB7 "));
-        if (isSidebar) {
-          infoDiv.style.fontSize = "10px";
-        } else {
-          infoDiv.style.fontSize = "12px";
-        }
       }
       if (!isSidebar) {
         const birthdaySpan = content.createSpan({ cls: "birthday-date", text: `${locale.birthdayLabel}\uFF1A${item.birthday}` });
-        birthdaySpan.style.minWidth = "100px";
         const nextSpan = content.createSpan({ cls: "birthday-next", text: `${locale.nextBirthdayLabel}\uFF1A${item.nextBirthday}` });
-        nextSpan.style.minWidth = "100px";
-        nextSpan.style.textAlign = "center";
         const daysSpan = content.createSpan({ cls: "birthday-days" });
-        daysSpan.style.color = item.daysRemaining <= 7 ? "var(--birthday-accent)" : "inherit";
-        daysSpan.style.fontWeight = "bold";
-        daysSpan.style.minWidth = "70px";
-        daysSpan.style.textAlign = "center";
+        if (item.daysRemaining <= 7) {
+          daysSpan.addClass("birthday-days-urgent");
+        }
         daysSpan.setText(item.isToday ? locale.todayBirthday : `${item.daysRemaining}${locale.daysRemaining}`);
         const ageText = isEnglish ? `${item.age} ${locale.ageUnitEn}` : `${item.age}${locale.ageUnit}`;
         const ageSpan = content.createSpan({ cls: "birthday-age", text: ageText });
-        ageSpan.style.minWidth = "60px";
-        ageSpan.style.textAlign = "right";
       } else {
-        const dateRow = content.createDiv();
-        dateRow.style.display = "flex";
-        dateRow.style.gap = "8px";
-        dateRow.style.flexWrap = "wrap";
+        const dateRow = content.createDiv({ cls: "birthday-date-row" });
         const birthdaySpan = dateRow.createSpan({ cls: "birthday-date", text: `${locale.birthdayLabel}\uFF1A${item.birthday}` });
-        birthdaySpan.style.fontSize = "11px";
         const nextSpan = dateRow.createSpan({ cls: "birthday-next", text: `${locale.nextBirthdayLabel}\uFF1A${item.nextBirthday}` });
-        nextSpan.style.fontSize = "11px";
-        const daysAgeRow = content.createDiv();
-        daysAgeRow.style.display = "flex";
-        daysAgeRow.style.gap = "12px";
-        daysAgeRow.style.marginTop = "4px";
+        const daysAgeRow = content.createDiv({ cls: "birthday-days-age-row" });
         const daysSpan = daysAgeRow.createSpan({ cls: "birthday-days" });
-        daysSpan.style.color = item.daysRemaining <= 7 ? "var(--birthday-accent)" : "inherit";
-        daysSpan.style.fontSize = "12px";
+        if (item.daysRemaining <= 7) {
+          daysSpan.addClass("birthday-days-urgent");
+        }
         daysSpan.setText(item.isToday ? locale.todayBirthday : `${item.daysRemaining}${locale.daysRemaining}`);
         const ageText = isEnglish ? `${item.age} ${locale.ageUnitEn}` : `${item.age}${locale.ageUnit}`;
         const ageSpan = daysAgeRow.createSpan({ cls: "birthday-age", text: ageText });
-        ageSpan.style.fontSize = "11px";
       }
     }
   }
@@ -1009,18 +982,18 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
     }
     const calendarEl = this.container.createDiv({ cls: "birthday-calendar" });
     const navEl = calendarEl.createDiv({ cls: "birthday-calendar-nav" });
-    const titleEl = navEl.createEl("h2", { text: locale.sectionCalendar });
+    const titleEl = navEl.createEl("h2", { cls: "birthday-calendar-title", text: locale.sectionCalendar });
     if (isSidebar) {
-      titleEl.style.fontSize = "16px";
+      titleEl.addClass("birthday-calendar-title-compact");
     }
-    const navButtons = navEl.createDiv();
+    const navButtons = navEl.createDiv({ cls: "birthday-calendar-nav-buttons" });
     const prevBtn = navButtons.createEl("button", { cls: "birthday-button", text: locale.prevMonth });
     const todayBtn = navButtons.createEl("button", { cls: "birthday-button", text: locale.todayButton });
     const nextBtn = navButtons.createEl("button", { cls: "birthday-button", text: locale.nextMonth });
     if (isSidebar) {
-      prevBtn.style.padding = "2px 6px";
-      todayBtn.style.padding = "2px 6px";
-      nextBtn.style.padding = "2px 6px";
+      prevBtn.addClass("birthday-button-compact");
+      todayBtn.addClass("birthday-button-compact");
+      nextBtn.addClass("birthday-button-compact");
     }
     let currentOffset = this.currentMonthOffset;
     const renderCalendarMonths = () => {
@@ -1036,23 +1009,17 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
         const monthEl = calendarEl.createDiv({ cls: "birthday-calendar-month" });
         const monthTitle = monthEl.createEl("h3", { cls: "birthday-calendar-month-title", text: `${year}\u5E74${month + 1}\u6708` });
         if (isSidebar) {
-          monthTitle.style.fontSize = "14px";
-          monthTitle.style.marginBottom = "8px";
+          monthTitle.addClass("birthday-calendar-month-title-compact");
         }
         const gridEl = monthEl.createDiv({ cls: "birthday-calendar-grid" });
-        if (isSidebar) {
-          gridEl.style.gap = "4px";
-        }
         const weekdays = locale.calendarWeekdays;
         weekdays.forEach((weekday) => {
           const weekdayEl = gridEl.createDiv({ cls: "birthday-calendar-weekday", text: weekday });
           if (isSidebar) {
-            weekdayEl.style.fontSize = "10px";
-            weekdayEl.style.padding = "2px";
+            weekdayEl.addClass("birthday-calendar-weekday-compact");
           }
         });
         const prevMonthDate = new Date(year, month, 0);
-        const prevMonthYear = prevMonthDate.getFullYear();
         const prevMonth = prevMonthDate.getMonth();
         const prevMonthDays = prevMonthDate.getDate();
         for (let i = 0; i < firstDayOfWeek; i++) {
@@ -1061,23 +1028,21 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
           const birthdays = monthDayMap.get(monthDayKey) || [];
           const dayEl = gridEl.createDiv({ cls: "birthday-calendar-day birthday-calendar-day-other" });
           if (isSidebar) {
-            dayEl.style.padding = "4px";
-            dayEl.style.minHeight = "50px";
+            dayEl.addClass("birthday-calendar-day-other-compact");
           }
           const dayNumEl = dayEl.createDiv({ cls: "birthday-calendar-day-number" });
           dayNumEl.setText(String(dayNum));
-          dayNumEl.style.opacity = "0.6";
+          dayNumEl.addClass("birthday-calendar-day-number-other");
           if (isSidebar) {
-            dayNumEl.style.fontSize = "10px";
+            dayNumEl.addClass("birthday-calendar-day-number-compact");
           }
           const maxShow = isSidebar ? 1 : 2;
           for (const b of birthdays.slice(0, maxShow)) {
             const birthdayEl = dayEl.createDiv({ cls: "birthday-calendar-day-birthday" });
             birthdayEl.setText(`\u{1F382} ${b.name}`);
-            birthdayEl.style.opacity = "0.8";
+            birthdayEl.addClass("birthday-calendar-day-birthday-other");
             if (isSidebar) {
-              birthdayEl.style.fontSize = "8px";
-              birthdayEl.style.padding = "1px 2px";
+              birthdayEl.addClass("birthday-calendar-day-birthday-compact");
             }
             birthdayEl.addEventListener("click", (e) => {
               e.stopPropagation();
@@ -1091,41 +1056,30 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
           const isToday = today.getDate() === d && today.getMonth() === month && today.getFullYear() === year;
           const dayEl = gridEl.createDiv({ cls: "birthday-calendar-day" });
           if (isSidebar) {
-            dayEl.style.padding = "4px";
-            dayEl.style.minHeight = "50px";
+            dayEl.addClass("birthday-calendar-day-compact");
           }
           if (isToday)
             dayEl.addClass("birthday-calendar-day-today");
           const dayNumEl = dayEl.createDiv({ cls: "birthday-calendar-day-number" });
           dayNumEl.setText(String(d));
           if (isSidebar) {
-            dayNumEl.style.fontSize = "10px";
+            dayNumEl.addClass("birthday-calendar-day-number-compact");
           }
           if (birthdays.length > 0) {
-            dayNumEl.style.color = "var(--birthday-accent)";
-            dayNumEl.style.fontWeight = "bold";
+            dayNumEl.addClass("birthday-calendar-day-number-has-birthday");
           }
           const maxShow = isSidebar ? 2 : 3;
           for (const b of birthdays.slice(0, maxShow)) {
             const birthdayEl = dayEl.createDiv({ cls: "birthday-calendar-day-birthday" });
             birthdayEl.setText(`\u{1F382} ${b.name}`);
-            if (isSidebar) {
-              birthdayEl.style.fontSize = "8px";
-              birthdayEl.style.padding = "1px 2px";
-            }
             birthdayEl.addEventListener("click", (e) => {
               e.stopPropagation();
               this.app.workspace.openLinkText(b.path, "", false);
             });
           }
           if (birthdays.length > maxShow) {
-            const moreEl = dayEl.createDiv({ cls: "birthday-calendar-day-birthday" });
-            moreEl.style.textAlign = "center";
-            moreEl.style.color = "var(--text-muted)";
+            const moreEl = dayEl.createDiv({ cls: "birthday-calendar-day-more" });
             moreEl.setText(`+${birthdays.length - maxShow}`);
-            if (isSidebar) {
-              moreEl.style.fontSize = "8px";
-            }
             moreEl.title = birthdays.slice(maxShow).map((b) => b.name).join(", ");
           }
         }
@@ -1133,29 +1087,27 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
         const remainingCells = Math.ceil(totalCells / 7) * 7 - totalCells;
         if (remainingCells > 0) {
           const nextMonthDate = new Date(year, month + 1, 1);
-          const nextMonthYear = nextMonthDate.getFullYear();
           const nextMonth = nextMonthDate.getMonth();
           for (let d = 1; d <= remainingCells; d++) {
             const monthDayKey = `${nextMonth + 1}-${d}`;
             const birthdays = monthDayMap.get(monthDayKey) || [];
             const dayEl = gridEl.createDiv({ cls: "birthday-calendar-day birthday-calendar-day-other" });
             if (isSidebar) {
-              dayEl.style.padding = "4px";
-              dayEl.style.minHeight = "50px";
+              dayEl.addClass("birthday-calendar-day-other-compact");
             }
             const dayNumEl = dayEl.createDiv({ cls: "birthday-calendar-day-number" });
             dayNumEl.setText(String(d));
-            dayNumEl.style.opacity = "0.6";
+            dayNumEl.addClass("birthday-calendar-day-number-other");
             if (isSidebar) {
-              dayNumEl.style.fontSize = "10px";
+              dayNumEl.addClass("birthday-calendar-day-number-compact");
             }
             const maxShow = isSidebar ? 1 : 2;
             for (const b of birthdays.slice(0, maxShow)) {
               const birthdayEl = dayEl.createDiv({ cls: "birthday-calendar-day-birthday" });
               birthdayEl.setText(`\u{1F382} ${b.name}`);
-              birthdayEl.style.opacity = "0.8";
+              birthdayEl.addClass("birthday-calendar-day-birthday-other");
               if (isSidebar) {
-                birthdayEl.style.fontSize = "8px";
+                birthdayEl.addClass("birthday-calendar-day-birthday-compact");
               }
               birthdayEl.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -1187,32 +1139,61 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
 
 // main.ts
 var BirthdayReminderPlugin = class extends import_obsidian3.Plugin {
-  constructor() {
-    super(...arguments);
-    this.view = null;
-  }
   async onload() {
     await this.loadSettings();
     this.registerView(
       VIEW_TYPE,
       (leaf) => {
-        this.view = new BirthdayReminderView(leaf, this);
-        return this.view;
+        return new BirthdayReminderView(leaf, this);
       }
     );
     this.addRibbonIcon("cake", "\u751F\u65E5\u63D0\u9192", () => {
       this.activateView();
     });
     this.addCommand({
-      id: "show-birthday-reminder",
+      id: "show",
       name: "\u663E\u793A\u751F\u65E5\u63D0\u9192\u9762\u677F",
       callback: () => this.activateView()
     });
     this.addSettingTab(new BirthdayReminderSettingTab(this.app, this));
+    this.setupFileWatcher();
+  }
+  setupFileWatcher() {
+    const vault = this.app.vault;
+    vault.on("create", (file) => {
+      if (file instanceof import_obsidian3.TFile && file.path.endsWith(".md")) {
+        this.refreshAllViews();
+      }
+    });
+    vault.on("delete", (file) => {
+      if (file instanceof import_obsidian3.TFile && file.path.endsWith(".md")) {
+        this.refreshAllViews();
+      }
+    });
+    vault.on("rename", (file) => {
+      if (file instanceof import_obsidian3.TFile && file.path.endsWith(".md")) {
+        this.refreshAllViews();
+      }
+    });
+    vault.on("modify", (file) => {
+      if (file instanceof import_obsidian3.TFile && file.path.endsWith(".md")) {
+        setTimeout(() => this.refreshAllViews(), 100);
+      }
+    });
+  }
+  refreshAllViews() {
+    const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+    if (leaves.length > 0) {
+      const view = leaves[0].view;
+      if (view) {
+        view.refresh();
+      }
+    }
   }
   async activateView() {
     const { workspace } = this.app;
-    let leaf = workspace.getLeavesOfType(VIEW_TYPE)[0];
+    const leaves = workspace.getLeavesOfType(VIEW_TYPE);
+    let leaf = leaves.length > 0 ? leaves[0] : null;
     if (!leaf) {
       const rightLeaf = workspace.getRightLeaf(false);
       if (rightLeaf) {
@@ -1235,9 +1216,7 @@ var BirthdayReminderPlugin = class extends import_obsidian3.Plugin {
   }
   async saveSettings() {
     await this.saveData(this.settings);
-    if (this.view) {
-      this.view.refresh();
-    }
+    this.refreshAllViews();
   }
   onunload() {
     this.app.workspace.getLeavesOfType(VIEW_TYPE).forEach((leaf) => leaf.detach());

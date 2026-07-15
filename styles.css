@@ -445,3 +445,205 @@
   font-size: inherit;
 }
 
+/* Settings page styles */
+.setting-item-description {
+  margin-bottom: 16px;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+
+.setting-item-description code {
+  background: var(--background-secondary);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: var(--font-monospace);
+}
+
+/* Color preview box */
+.birthday-color-preview-box {
+  margin: 16px 0;
+  padding: 12px;
+  background: var(--background-primary);
+  border-radius: 8px;
+  border: 1px solid var(--background-modifier-border);
+}
+
+.birthday-color-preview-primary {
+  display: inline-block;
+  background: var(--interactive-accent);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.birthday-color-preview-secondary {
+  display: inline-block;
+  background: var(--background-primary-alt);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.birthday-color-preview-accent {
+  display: inline-block;
+  color: var(--text-accent);
+  font-weight: bold;
+  margin-right: 12px;
+}
+
+.birthday-color-preview-warning {
+  display: block;
+  background: rgba(255, 100, 100, 0.3);
+  padding: 4px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.birthday-color-preview-success {
+  display: block;
+  background: rgba(100, 255, 100, 0.2);
+  padding: 4px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+/* Additional styles for view refactoring */
+.birthday-stat-number-accent {
+  color: var(--birthday-accent);
+}
+
+/* Sidebar compact mode */
+.birthday-stats-compact .birthday-stat-card-compact {
+  padding: 4px 8px;
+}
+
+.birthday-stats-compact .birthday-stat-number-accent {
+  color: var(--birthday-accent);
+}
+
+/* Section styles */
+.birthday-section-title-compact {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.birthday-item-compact {
+  padding: 6px 8px;
+}
+
+.birthday-item-content-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.birthday-item-content-full {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.birthday-name-compact {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.birthday-name-full {
+  min-width: 120px;
+  flex: 2;
+}
+
+.birthday-days-urgent {
+  color: var(--birthday-accent);
+  font-weight: bold;
+}
+
+/* Sidebar specific */
+.birthday-date-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.birthday-date-row .birthday-date,
+.birthday-date-row .birthday-next {
+  font-size: 11px;
+}
+
+.birthday-days-age-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.birthday-days-age-row .birthday-days {
+  font-size: 12px;
+}
+
+.birthday-days-age-row .birthday-age {
+  font-size: 11px;
+}
+
+/* Calendar styles */
+.birthday-calendar-title-compact {
+  font-size: 16px;
+}
+
+.birthday-calendar-nav-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.birthday-button-compact {
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+.birthday-calendar-month-title-compact {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.birthday-calendar-weekday-compact {
+  font-size: 10px;
+  padding: 2px;
+}
+
+.birthday-calendar-day-compact {
+  padding: 4px;
+  min-height: 50px;
+}
+
+.birthday-calendar-day-other-compact .birthday-calendar-day-number {
+  opacity: 0.6;
+}
+
+.birthday-calendar-day-number-compact {
+  font-size: 10px;
+}
+
+.birthday-calendar-day-birthday-compact {
+  font-size: 8px;
+  padding: 1px 2px;
+}
+
+.birthday-calendar-day-birthday-other {
+  opacity: 0.8;
+}
+
+.birthday-calendar-day-number-has-birthday {
+  color: var(--birthday-accent);
+  font-weight: bold;
+}
+
+.birthday-calendar-day-more {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+

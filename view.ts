@@ -69,17 +69,19 @@ export class BirthdayReminderView extends ItemView {
     this.refreshInterval = window.setInterval(() => this.render(), 3600000);
   }
 
-  async onClose() {
+  async onClose(): Promise<void> {
     if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
+      window.clearInterval(this.refreshInterval);
     }
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
   }
 
-  refresh() {
-    this.render();
+  refresh(): void {
+    this.render().catch((error) => {
+      console.error('Failed to refresh birthday view:', error);
+    });
   }
   
   // 检测是否为侧边栏模式（宽度小于450px认为是侧边栏）
@@ -135,16 +137,19 @@ export class BirthdayReminderView extends ItemView {
     
     for (const file of files) {
       const cache = this.app.metadataCache.getFileCache(file);
-      const frontmatter = cache?.frontmatter;
-      const birthday = frontmatter?.[birthdayProp];
-      
-      if (!birthday) continue;
-      
+      if (!cache) continue;
+
+      const frontmatter = cache.frontmatter as Record<string, unknown> | undefined;
+      if (!frontmatter) continue;
+
+      const birthday = frontmatter[birthdayProp];
+      if (typeof birthday !== 'string' && !(birthday instanceof Date)) continue;
+
+      const birthDate = birthday instanceof Date ? birthday : new Date(birthday as string);
+      if (isNaN(birthDate.getTime())) continue;
+
       // 检查路径
       if (settings.targetPath && !file.path.startsWith(settings.targetPath)) continue;
-      
-      const birthDate = new Date(birthday);
-      if (isNaN(birthDate.getTime())) continue;
       
       // 计算下一个生日
       const currentYear = today.getFullYear();
@@ -160,13 +165,15 @@ export class BirthdayReminderView extends ItemView {
       let lunarInfo: string | null = null;
       if (settings.enableLunar) {
         const lunar = solarToLunar(birthDate, currentLanguage);
-        if (isEnglish) {
-          // 英文格式: "Apr 26th"
-          lunarInfo = `${lunar.monthName} ${lunar.dayName}`;
-        } else {
-          // 中文格式: "四月廿六"
-          lunarInfo = `${lunar.monthName}月${lunar.dayName}`;
-          if (lunar.isLeap) lunarInfo = `闰${lunarInfo}`;
+        if (lunar) {
+          if (isEnglish) {
+            // 英文格式: "Apr 26th"
+            lunarInfo = `${lunar.monthName} ${lunar.dayName}`;
+          } else {
+            // 中文格式: "四月廿六"
+            lunarInfo = `${lunar.monthName}月${lunar.dayName}`;
+            if (lunar.isLeap) lunarInfo = `闰${lunarInfo}`;
+          }
         }
       }
       
@@ -183,7 +190,7 @@ export class BirthdayReminderView extends ItemView {
       birthdayData.push({
         name: file.name.replace(/\.md$/, ''),
         path: file.path,
-        birthday: birthday,
+        birthday: birthDate.toISOString().split('T')[0],
         nextBirthday: `${nextBirthday.getFullYear()}-${String(nextBirthday.getMonth() + 1).padStart(2, '0')}-${String(nextBirthday.getDate()).padStart(2, '0')}`,
         daysRemaining,
         age,
@@ -274,7 +281,7 @@ export class BirthdayReminderView extends ItemView {
       }
       const numSpan = card.createSpan({ cls: 'birthday-stat-number' });
       if (stat.accent) {
-        numSpan.style.color = 'var(--birthday-accent)';
+        numSpan.addClass('birthday-stat-number-accent');
       }
       numSpan.setText(String(stat.number));
       const labelSpan = card.createDiv({ cls: 'birthday-stat-label' });
@@ -313,15 +320,13 @@ export class BirthdayReminderView extends ItemView {
     
     const titleEl = section.createEl('h2', { cls: 'birthday-section-title', text: titleText });
     if (isSidebar) {
-      titleEl.style.fontSize = '14px';
-      titleEl.style.marginBottom = '8px';
+      titleEl.addClass('birthday-section-title-compact');
     }
     
     for (const item of items) {
       const itemEl = section.createDiv({ cls: 'birthday-item' });
       if (isSidebar) {
         itemEl.addClass('birthday-item-compact');
-        itemEl.style.padding = '6px 8px';
       }
       
       if (item.isToday && this.plugin.settings.highlightToday) {
@@ -335,31 +340,20 @@ export class BirthdayReminderView extends ItemView {
       });
       
       const content = itemEl.createDiv({ cls: 'birthday-item-content' });
-      
+
       if (isSidebar) {
-        // 侧边栏模式：垂直布局
-        content.style.flexDirection = 'column';
-        content.style.alignItems = 'flex-start';
-        content.style.gap = '4px';
+        content.addClass('birthday-item-content-compact');
       } else {
-        // 全窗口模式：水平布局
-        content.style.display = 'flex';
-        content.style.flexDirection = 'row';
-        content.style.alignItems = 'center';
-        content.style.justifyContent = 'space-between';
-        content.style.flexWrap = 'wrap';
-        content.style.gap = '12px';
+        content.addClass('birthday-item-content-full');
       }
       
       // 姓名区域
       const nameDiv = content.createDiv({ cls: 'birthday-name' });
       nameDiv.createSpan({ text: item.name });
       if (isSidebar) {
-        nameDiv.style.fontWeight = 'bold';
-        nameDiv.style.fontSize = '13px';
+        nameDiv.addClass('birthday-name-compact');
       } else {
-        nameDiv.style.minWidth = '120px';
-        nameDiv.style.flex = '2';
+        nameDiv.addClass('birthday-name-full');
       }
       
       if (showExtra && (item.animal || item.zodiac || item.lunarInfo)) {
@@ -377,62 +371,40 @@ export class BirthdayReminderView extends ItemView {
           }
         }
         infoDiv.setText(infoParts.join(' · '));
-        if (isSidebar) {
-          infoDiv.style.fontSize = '10px';
-        } else {
-          infoDiv.style.fontSize = '12px';
-        }
       }
       
       if (!isSidebar) {
         // 全窗口模式：创建独立元素
         const birthdaySpan = content.createSpan({ cls: 'birthday-date', text: `${locale.birthdayLabel}：${item.birthday}` });
-        birthdaySpan.style.minWidth = '100px';
-        
+
         const nextSpan = content.createSpan({ cls: 'birthday-next', text: `${locale.nextBirthdayLabel}：${item.nextBirthday}` });
-        nextSpan.style.minWidth = '100px';
-        nextSpan.style.textAlign = 'center';
-        
+
         const daysSpan = content.createSpan({ cls: 'birthday-days' });
-        daysSpan.style.color = item.daysRemaining <= 7 ? 'var(--birthday-accent)' : 'inherit';
-        daysSpan.style.fontWeight = 'bold';
-        daysSpan.style.minWidth = '70px';
-        daysSpan.style.textAlign = 'center';
+        if (item.daysRemaining <= 7) {
+          daysSpan.addClass('birthday-days-urgent');
+        }
         daysSpan.setText(item.isToday ? locale.todayBirthday : `${item.daysRemaining}${locale.daysRemaining}`);
-        
+
         // 年龄显示 - 根据语言显示单位
         const ageText = isEnglish ? `${item.age} ${locale.ageUnitEn}` : `${item.age}${locale.ageUnit}`;
         const ageSpan = content.createSpan({ cls: 'birthday-age', text: ageText });
-        ageSpan.style.minWidth = '60px';
-        ageSpan.style.textAlign = 'right';
       } else {
         // 侧边栏模式：创建行容器
-        const dateRow = content.createDiv();
-        dateRow.style.display = 'flex';
-        dateRow.style.gap = '8px';
-        dateRow.style.flexWrap = 'wrap';
-        
+        const dateRow = content.createDiv({ cls: 'birthday-date-row' });
         const birthdaySpan = dateRow.createSpan({ cls: 'birthday-date', text: `${locale.birthdayLabel}：${item.birthday}` });
-        birthdaySpan.style.fontSize = '11px';
-        
         const nextSpan = dateRow.createSpan({ cls: 'birthday-next', text: `${locale.nextBirthdayLabel}：${item.nextBirthday}` });
-        nextSpan.style.fontSize = '11px';
-        
+
         // 创建天数和年龄的行容器
-        const daysAgeRow = content.createDiv();
-        daysAgeRow.style.display = 'flex';
-        daysAgeRow.style.gap = '12px';
-        daysAgeRow.style.marginTop = '4px';
-        
+        const daysAgeRow = content.createDiv({ cls: 'birthday-days-age-row' });
         const daysSpan = daysAgeRow.createSpan({ cls: 'birthday-days' });
-        daysSpan.style.color = item.daysRemaining <= 7 ? 'var(--birthday-accent)' : 'inherit';
-        daysSpan.style.fontSize = '12px';
+        if (item.daysRemaining <= 7) {
+          daysSpan.addClass('birthday-days-urgent');
+        }
         daysSpan.setText(item.isToday ? locale.todayBirthday : `${item.daysRemaining}${locale.daysRemaining}`);
-        
+
         // 年龄显示 - 根据语言显示单位
         const ageText = isEnglish ? `${item.age} ${locale.ageUnitEn}` : `${item.age}${locale.ageUnit}`;
         const ageSpan = daysAgeRow.createSpan({ cls: 'birthday-age', text: ageText });
-        ageSpan.style.fontSize = '11px';
       }
     }
   }
@@ -455,20 +427,20 @@ export class BirthdayReminderView extends ItemView {
     
     // 导航栏
     const navEl = calendarEl.createDiv({ cls: 'birthday-calendar-nav' });
-    const titleEl = navEl.createEl('h2', { text: locale.sectionCalendar });
+    const titleEl = navEl.createEl('h2', { cls: 'birthday-calendar-title', text: locale.sectionCalendar });
     if (isSidebar) {
-      titleEl.style.fontSize = '16px';
+      titleEl.addClass('birthday-calendar-title-compact');
     }
     
-    const navButtons = navEl.createDiv();
+    const navButtons = navEl.createDiv({ cls: 'birthday-calendar-nav-buttons' });
     const prevBtn = navButtons.createEl('button', { cls: 'birthday-button', text: locale.prevMonth });
     const todayBtn = navButtons.createEl('button', { cls: 'birthday-button', text: locale.todayButton });
     const nextBtn = navButtons.createEl('button', { cls: 'birthday-button', text: locale.nextMonth });
     
     if (isSidebar) {
-      prevBtn.style.padding = '2px 6px';
-      todayBtn.style.padding = '2px 6px';
-      nextBtn.style.padding = '2px 6px';
+      prevBtn.addClass('birthday-button-compact');
+      todayBtn.addClass('birthday-button-compact');
+      nextBtn.addClass('birthday-button-compact');
     }
     
     let currentOffset = this.currentMonthOffset;
@@ -490,28 +462,22 @@ export class BirthdayReminderView extends ItemView {
         const monthEl = calendarEl.createDiv({ cls: 'birthday-calendar-month' });
         const monthTitle = monthEl.createEl('h3', { cls: 'birthday-calendar-month-title', text: `${year}年${month + 1}月` });
         if (isSidebar) {
-          monthTitle.style.fontSize = '14px';
-          monthTitle.style.marginBottom = '8px';
+          monthTitle.addClass('birthday-calendar-month-title-compact');
         }
         
         const gridEl = monthEl.createDiv({ cls: 'birthday-calendar-grid' });
-        if (isSidebar) {
-          gridEl.style.gap = '4px';
-        }
         
         // 星期标题
         const weekdays = locale.calendarWeekdays;
         weekdays.forEach(weekday => {
           const weekdayEl = gridEl.createDiv({ cls: 'birthday-calendar-weekday', text: weekday });
           if (isSidebar) {
-            weekdayEl.style.fontSize = '10px';
-            weekdayEl.style.padding = '2px';
+            weekdayEl.addClass('birthday-calendar-weekday-compact');
           }
         });
         
         // 获取上个月的最后一天
         const prevMonthDate = new Date(year, month, 0);
-        const prevMonthYear = prevMonthDate.getFullYear();
         const prevMonth = prevMonthDate.getMonth();
         const prevMonthDays = prevMonthDate.getDate();
         
@@ -523,25 +489,23 @@ export class BirthdayReminderView extends ItemView {
           
           const dayEl = gridEl.createDiv({ cls: 'birthday-calendar-day birthday-calendar-day-other' });
           if (isSidebar) {
-            dayEl.style.padding = '4px';
-            dayEl.style.minHeight = '50px';
+            dayEl.addClass('birthday-calendar-day-other-compact');
           }
           
           const dayNumEl = dayEl.createDiv({ cls: 'birthday-calendar-day-number' });
           dayNumEl.setText(String(dayNum));
-          dayNumEl.style.opacity = '0.6';
+          dayNumEl.addClass('birthday-calendar-day-number-other');
           if (isSidebar) {
-            dayNumEl.style.fontSize = '10px';
+            dayNumEl.addClass('birthday-calendar-day-number-compact');
           }
           
           const maxShow = isSidebar ? 1 : 2;
           for (const b of birthdays.slice(0, maxShow)) {
             const birthdayEl = dayEl.createDiv({ cls: 'birthday-calendar-day-birthday' });
             birthdayEl.setText(`🎂 ${b.name}`);
-            birthdayEl.style.opacity = '0.8';
+            birthdayEl.addClass('birthday-calendar-day-birthday-other');
             if (isSidebar) {
-              birthdayEl.style.fontSize = '8px';
-              birthdayEl.style.padding = '1px 2px';
+              birthdayEl.addClass('birthday-calendar-day-birthday-compact');
             }
             birthdayEl.addEventListener('click', (e) => {
               e.stopPropagation();
@@ -558,43 +522,32 @@ export class BirthdayReminderView extends ItemView {
           
           const dayEl = gridEl.createDiv({ cls: 'birthday-calendar-day' });
           if (isSidebar) {
-            dayEl.style.padding = '4px';
-            dayEl.style.minHeight = '50px';
+            dayEl.addClass('birthday-calendar-day-compact');
           }
           if (isToday) dayEl.addClass('birthday-calendar-day-today');
-          
+
           const dayNumEl = dayEl.createDiv({ cls: 'birthday-calendar-day-number' });
           dayNumEl.setText(String(d));
           if (isSidebar) {
-            dayNumEl.style.fontSize = '10px';
+            dayNumEl.addClass('birthday-calendar-day-number-compact');
           }
           if (birthdays.length > 0) {
-            dayNumEl.style.color = 'var(--birthday-accent)';
-            dayNumEl.style.fontWeight = 'bold';
+            dayNumEl.addClass('birthday-calendar-day-number-has-birthday');
           }
           
           const maxShow = isSidebar ? 2 : 3;
           for (const b of birthdays.slice(0, maxShow)) {
             const birthdayEl = dayEl.createDiv({ cls: 'birthday-calendar-day-birthday' });
             birthdayEl.setText(`🎂 ${b.name}`);
-            if (isSidebar) {
-              birthdayEl.style.fontSize = '8px';
-              birthdayEl.style.padding = '1px 2px';
-            }
             birthdayEl.addEventListener('click', (e) => {
               e.stopPropagation();
               this.app.workspace.openLinkText(b.path, '', false);
             });
           }
-          
+
           if (birthdays.length > maxShow) {
-            const moreEl = dayEl.createDiv({ cls: 'birthday-calendar-day-birthday' });
-            moreEl.style.textAlign = 'center';
-            moreEl.style.color = 'var(--text-muted)';
+            const moreEl = dayEl.createDiv({ cls: 'birthday-calendar-day-more' });
             moreEl.setText(`+${birthdays.length - maxShow}`);
-            if (isSidebar) {
-              moreEl.style.fontSize = '8px';
-            }
             moreEl.title = birthdays.slice(maxShow).map(b => b.name).join(', ');
           }
         }
@@ -606,7 +559,6 @@ export class BirthdayReminderView extends ItemView {
         // 填充下个月日期
         if (remainingCells > 0) {
           const nextMonthDate = new Date(year, month + 1, 1);
-          const nextMonthYear = nextMonthDate.getFullYear();
           const nextMonth = nextMonthDate.getMonth();
           
           for (let d = 1; d <= remainingCells; d++) {
@@ -615,24 +567,23 @@ export class BirthdayReminderView extends ItemView {
             
             const dayEl = gridEl.createDiv({ cls: 'birthday-calendar-day birthday-calendar-day-other' });
             if (isSidebar) {
-              dayEl.style.padding = '4px';
-              dayEl.style.minHeight = '50px';
+              dayEl.addClass('birthday-calendar-day-other-compact');
             }
-            
+
             const dayNumEl = dayEl.createDiv({ cls: 'birthday-calendar-day-number' });
             dayNumEl.setText(String(d));
-            dayNumEl.style.opacity = '0.6';
+            dayNumEl.addClass('birthday-calendar-day-number-other');
             if (isSidebar) {
-              dayNumEl.style.fontSize = '10px';
+              dayNumEl.addClass('birthday-calendar-day-number-compact');
             }
-            
+
             const maxShow = isSidebar ? 1 : 2;
             for (const b of birthdays.slice(0, maxShow)) {
               const birthdayEl = dayEl.createDiv({ cls: 'birthday-calendar-day-birthday' });
               birthdayEl.setText(`🎂 ${b.name}`);
-              birthdayEl.style.opacity = '0.8';
+              birthdayEl.addClass('birthday-calendar-day-birthday-other');
               if (isSidebar) {
-                birthdayEl.style.fontSize = '8px';
+                birthdayEl.addClass('birthday-calendar-day-birthday-compact');
               }
               birthdayEl.addEventListener('click', (e) => {
                 e.stopPropagation();

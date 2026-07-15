@@ -103,7 +103,9 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
     containerEl.empty();
     const locale = this.getLocale();
 
-    containerEl.createEl('h2', { text: locale.settingsTitle });
+    new Setting(containerEl)
+      .setName(locale.settingsTitle)
+      .setHeading();
 
     new Setting(containerEl)
       .setName(locale.settingsTargetPath)
@@ -130,14 +132,17 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
 
     // 添加提示示例
     const exampleEl = containerEl.createDiv({ cls: 'setting-item-description' });
-    exampleEl.style.marginBottom = '16px';
-    exampleEl.style.fontSize = '12px';
-    exampleEl.style.color = 'var(--text-muted)';
-    exampleEl.innerHTML = `
-      💡 ${locale.settingsBirthdayPropertyDesc}<br>
-      - ${locale.settingsBirthdayPropertyPlaceholder}: <code>birthday: 1990-05-20</code><br>
-      - date_of_birth: <code>date_of_birth: 1990-05-20</code>
-    `;
+    const exampleText1 = exampleEl.createSpan();
+    exampleText1.setText(`${locale.settingsBirthdayPropertyDesc} `);
+
+    const code1 = exampleEl.createSpan({ cls: 'code-example' });
+    code1.setText(`${locale.settingsBirthdayPropertyPlaceholder}: 1990-05-20`);
+
+    const exampleText2 = exampleEl.createSpan();
+    exampleText2.setText(` - date_of_birth: `);
+
+    const code2 = exampleEl.createSpan({ cls: 'code-example' });
+    code2.setText(`date_of_birth: 1990-05-20`);
 
     new Setting(containerEl)
       .setName(locale.settingsVisibleMonths)
@@ -145,7 +150,6 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       .addSlider(slider => slider
         .setLimits(1, 6, 1)
         .setValue(this.plugin.settings.visibleMonths)
-        .setDynamicTooltip()
         .onChange(async (value) => {
           this.plugin.settings.visibleMonths = value;
           await this.plugin.saveSettings();
@@ -166,25 +170,23 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
         });
       });
 
-    // 预览配色
+    // 预览配色 - 使用 CSS 类
     const scheme = COLOR_SCHEMES[this.plugin.settings.colorScheme];
-    const previewEl = containerEl.createDiv({ cls: 'birthday-color-preview' });
-    previewEl.style.cssText = `
-      margin: 16px 0;
-      padding: 12px;
-      background: var(--background-primary);
-      border-radius: 8px;
-      border: 1px solid var(--background-modifier-border);
-    `;
-    previewEl.innerHTML = `
-      <div style="display: flex; gap: 12px; margin-bottom: 8px;">
-        <span style="background: ${scheme.primary}; color: white; padding: 2px 8px; border-radius: 4px;">${locale.colorSchemeDefault}</span>
-        <span style="background: ${scheme.secondary}; padding: 2px 8px; border-radius: 4px;">${locale.colorSchemeDefault}</span>
-        <span style="color: ${scheme.accent}; font-weight: bold;">${locale.colorSchemeDefault}</span>
-      </div>
-      <div style="background: ${scheme.warning}; padding: 4px; border-radius: 4px;">${locale.colorSchemeDefault}</div>
-      <div style="background: ${scheme.success}; padding: 4px; border-radius: 4px; margin-top: 4px;">${locale.colorSchemeDefault}</div>
-    `;
+    const previewEl = containerEl.createDiv({ cls: 'birthday-color-preview-box' });
+
+    const previewRow1 = previewEl.createDiv({ cls: 'birthday-color-preview-row' });
+    const primarySpan = previewRow1.createSpan({ cls: 'birthday-color-preview-primary' });
+    primarySpan.setText(locale.colorSchemeDefault);
+    const secondarySpan = previewRow1.createSpan({ cls: 'birthday-color-preview-secondary' });
+    secondarySpan.setText(locale.colorSchemeDefault);
+    const accentSpan = previewRow1.createSpan({ cls: 'birthday-color-preview-accent' });
+    accentSpan.setText(locale.colorSchemeDefault);
+
+    const warningDiv = previewEl.createDiv({ cls: 'birthday-color-preview-warning' });
+    warningDiv.setText(locale.colorSchemeDefault);
+
+    const successDiv = previewEl.createDiv({ cls: 'birthday-color-preview-success' });
+    successDiv.setText(locale.colorSchemeDefault);
 
     new Setting(containerEl)
       .setName(locale.settingsLanguage)
