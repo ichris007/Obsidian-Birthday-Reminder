@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, SettingDef } from 'obsidian';
+import { App, PluginSettingTab, SettingDef } from 'obsidian';
 import BirthdayReminderPlugin from './main';
 import { getLocale, Language, LocaleMessages } from './locales';
 
@@ -74,12 +74,9 @@ export const COLOR_SCHEMES: Record<string, { name: string; primary: string; seco
   }
 };
 
-export class BirthdayReminderSettingTab extends PluginSettingTab {
-  plugin: BirthdayReminderPlugin;
-
+export class BirthdayReminderSettingTab extends PluginSettingTab<BirthdayReminderPlugin> {
   constructor(app: App, plugin: BirthdayReminderPlugin) {
     super(app, plugin);
-    this.plugin = plugin;
   }
 
   private getLocale(): LocaleMessages {
@@ -103,6 +100,14 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
     const settings = this.plugin.settings;
 
     const definitions: SettingDef[] = [];
+
+    // Helper function to create elements with proper document context
+    const createEl = (containerEl: HTMLElement, tag: string, className?: string, textContent?: string): HTMLElement => {
+      const el = containerEl.ownerDocument.createElement(tag);
+      if (className) el.className = className;
+      if (textContent) el.textContent = textContent;
+      return el;
+    };
 
     // Header
     definitions.push({
@@ -140,19 +145,12 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
     // Birthday Property Examples (container)
     definitions.push({
       type: 'container',
-      name: () => {
-        const exampleEl = document.createElement('div');
-        exampleEl.className = 'setting-item-description';
-        const exampleText1 = document.createElement('span');
-        exampleText1.textContent = `${locale.settingsBirthdayPropertyDesc} `;
-        const code1 = document.createElement('span');
-        code1.className = 'code-example';
-        code1.textContent = `${locale.settingsBirthdayPropertyPlaceholder}: 1990-05-20`;
-        const exampleText2 = document.createElement('span');
-        exampleText2.textContent = ` - date_of_birth: `;
-        const code2 = document.createElement('span');
-        code2.className = 'code-example';
-        code2.textContent = `date_of_birth: 1990-05-20`;
+      name: (containerEl: HTMLElement) => {
+        const exampleEl = createEl(containerEl, 'div', 'setting-item-description');
+        const exampleText1 = createEl(containerEl, 'span', undefined, `${locale.settingsBirthdayPropertyDesc} `);
+        const code1 = createEl(containerEl, 'span', 'code-example', `${locale.settingsBirthdayPropertyPlaceholder}: 1990-05-20`);
+        const exampleText2 = createEl(containerEl, 'span', undefined, ` - date_of_birth: `);
+        const code2 = createEl(containerEl, 'span', 'code-example', `date_of_birth: 1990-05-20`);
         exampleEl.append(exampleText1, code1, exampleText2, code2);
         return exampleEl;
       },
@@ -179,9 +177,9 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       name: locale.settingsColorScheme,
       description: locale.settingsColorSchemeDesc,
       value: settings.colorScheme,
-      options: Object.entries(COLOR_SCHEMES).map(([key, scheme]) => ({
+      options: (Object.keys(COLOR_SCHEMES) as Array<keyof typeof COLOR_SCHEMES>).map(key => ({
         value: key,
-        label: this.getColorSchemeName(key as keyof typeof COLOR_SCHEMES),
+        label: this.getColorSchemeName(key),
       })),
       onChange: (value: string) => {
         settings.colorScheme = value;
@@ -192,30 +190,16 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
     // Color Preview
     definitions.push({
       type: 'container',
-      name: () => {
-        const previewEl = document.createElement('div');
-        previewEl.className = 'birthday-color-preview-box';
+      name: (containerEl: HTMLElement) => {
+        const previewEl = createEl(containerEl, 'div', 'birthday-color-preview-box');
 
-        const row1 = previewEl.appendChild(document.createElement('div'));
-        row1.className = 'birthday-color-preview-row';
+        const row1 = createEl(previewEl, 'div', 'birthday-color-preview-row');
+        createEl(row1, 'span', 'birthday-color-preview-primary', locale.colorSchemeDefault);
+        createEl(row1, 'span', 'birthday-color-preview-secondary', locale.colorSchemeDefault);
+        createEl(row1, 'span', 'birthday-color-preview-accent', locale.colorSchemeDefault);
 
-        const primary = row1.appendChild(document.createElement('span'));
-        primary.className = 'birthday-color-preview-primary';
-        primary.textContent = locale.colorSchemeDefault;
-        const secondary = row1.appendChild(document.createElement('span'));
-        secondary.className = 'birthday-color-preview-secondary';
-        secondary.textContent = locale.colorSchemeDefault;
-        const accent = row1.appendChild(document.createElement('span'));
-        accent.className = 'birthday-color-preview-accent';
-        accent.textContent = locale.colorSchemeDefault;
-
-        const warning = previewEl.appendChild(document.createElement('div'));
-        warning.className = 'birthday-color-preview-warning';
-        warning.textContent = locale.colorSchemeDefault;
-
-        const success = previewEl.appendChild(document.createElement('div'));
-        success.className = 'birthday-color-preview-success';
-        success.textContent = locale.colorSchemeDefault;
+        createEl(previewEl, 'div', 'birthday-color-preview-warning', locale.colorSchemeDefault);
+        createEl(previewEl, 'div', 'birthday-color-preview-success', locale.colorSchemeDefault);
 
         return previewEl;
       },

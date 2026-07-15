@@ -141,10 +141,11 @@ export class BirthdayReminderView extends ItemView {
       const cache = this.app.metadataCache.getFileCache(file);
       if (!cache) continue;
 
-      const frontmatter = cache.frontmatter as Record<string, unknown>;
-      if (!frontmatter) continue;
+      const frontmatter = cache.frontmatter;
+      if (typeof frontmatter !== 'object' || frontmatter === null) continue;
+      const frontmatterObj = frontmatter as Record<string, unknown>;
 
-      const birthday = frontmatter[birthdayProp];
+      const birthday = frontmatterObj[birthdayProp];
       let birthDate: Date | null = null;
       if (typeof birthday === 'string') {
         birthDate = new Date(birthday);
