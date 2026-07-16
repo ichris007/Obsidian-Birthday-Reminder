@@ -138,26 +138,24 @@ Click any birthday card or birthday name in the calendar to immediately open the
 
 ### 5.1 Installation
 
-The plugin is not yet available in the Obsidian community plugin store. You can install it using one of the following methods:
+The plugin is now available in the **Obsidian Community Plugin Store**! 🎉
 
-#### 5.1.1 Method 1: Install via BRAT (Recommended)
+#### Method 1: Install from Community Plugins (Recommended)
+1. Open **Settings** → **Community Plugins**
+2. Click **Browse** and search for `Birthday Reminder`
+3. Click **Install** and then **Enable**
 
-1. Make sure you have the **BRAT** plugin installed and enabled.
-2. Open **Settings** → **BRAT** (under Community Plugins).
-3. Click the **Add Beta Plugin** button.
-4. In the dialog that appears, enter the following repository address:  
-    `https://github.com/ichris007/Obsidian-Birthday-Reminder`
-5. (Optional) Enter a name, e.g., `Birthday Reminder`.
-6. Click **Add Plugin**. BRAT will automatically download and install it.
-7. Once installed, go to **Settings** → **Community Plugins**, find **Birthday Reminder**, and enable it.
+#### Method 2: Install via BRAT
+1. Open **Settings** → **BRAT** (under Community Plugins)
+2. Click the **Add Beta Plugin** button
+3. Enter the repository address: `https://github.com/ichris007/Obsidian-Birthday-Reminder`
+4. Click **Add Plugin** – BRAT will automatically download and install it
+5. Go to **Settings** → **Community Plugins**, find **Birthday Reminder**, and enable it
 
-#### 5.1.2 Method 2: Manual Installation
-
-1. Download the latest release (`main.js`, `manifest.json`, `styles.css`) from the [Releases page](https://github.com/ichris007/Obsidian-Birthday-Reminder/releases).
-2. Extract the files into your Obsidian vault’s plugins folder:  
-    `.obsidian/plugins/birthday-reminder/`
-3. Restart Obsidian.
-4. Go to **Settings** → **Community Plugins**, find **Birthday Reminder**, and enable it.
+#### Method 3: Manual Installation
+1. Download the latest release (`main.js`, `manifest.json`, `styles.css`) from the [Releases page](https://github.com/ichris007/Obsidian-Birthday-Reminder/releases)
+2. Extract the files into: `.obsidian/plugins/birthday-reminder/`
+3. Restart Obsidian and enable the plugin
 
 ### 5.2 Configuration Steps
 
@@ -181,22 +179,56 @@ birthday: 1990-05-20
 
 ## 6 📝 Changelog
 
-### 6.1 v1.1.0 (2026-03-21)
+### v1.5.2 (2026-07-16)
+- 🐛 **Fixed age calculation logic** – Correctly handles birthdays that have already passed this year, preventing off-by-one-year age errors
+- 🔧 Improved code clarity with explicit `birthMonth`/`birthDay` variable extraction
+
+### v1.5.1 (2026-07-16)
+- 🔧 **Installation fix** – Lowered `minAppVersion` to `1.12.7` to resolve "no appropriate version found" error
+- 🌐 **Complete localization** – All settings UI text fully localized; color scheme names now display in the selected language
+- ✨ **Slider dynamic tooltip** – Shows current value (e.g., "3 months") when dragging the visible months slider
+- 🎨 **Color preview real-time update** – Preview updates immediately when switching color schemes
+- 🔄 **Language switching instant** – Settings panel refreshes immediately when switching languages
+
+<details>
+    <summary>more details</summary>
+
+### v1.5.0 (2026-07-15)
+- 🏗️ **Settings API stabilization** – Reverted to traditional `Setting` class + `display()` method for better stability
+- ⚙️ **Complete settings implementation** – All settings fully functional with proper type annotations
+- 🎨 **Color preview** – Visual preview of selected color scheme
+- 🔮 **Future upgrade path** – Reserved `getSettingDefinitions()` for future migration
+
+### v1.4.1 (2026-07-15)
+- 🛡️ **Zero `any` types** – Complete type safety overhaul
+- 🏗️ **Settings API migration** – Migrated to new declarative API
+- 🪟 **Popout window compatibility** – Full support for Obsidian popout windows
+
+### v1.4.0 (2026-07-15)
+- 🔄 **Auto-refresh** – View updates automatically when birthday notes are created, deleted, renamed, or modified
+- 📦 **Updated minAppVersion** to `1.13.0`
+
+### v1.3.0 (2026-07-15)
+- ✨ **Auto-refresh on file changes** – Added file watcher with 100ms debounce
+- 🔧 **Promise handling** – All async operations properly marked with `void`
+- 🛡️ **Type safety** – Added type assertions and guards
+
+### v1.2.0 (2026-07-15)
+- 🎯 **Code quality** – All community plugin review issues resolved
+- 🎨 **UI overhaul** – Replaced inline styles with CSS classes
+- 🧹 **Memory leak fixes** – Removed leftover references and improved cleanup
+
+### v1.1.0 (2026-03-21)
 - ✨ New Features
   - Full English interface support with localized animal signs, zodiac signs, lunar dates, and age units
   - Dynamic interface text based on language settings
-
 - 🐛 Bug Fixes
   - Fixed issue where animal signs and zodiac signs displayed in Chinese even in English mode
   - Fixed age unit showing "岁" (Chinese) instead of "years old" in English mode
 
-- 📝 Other
-  - Improved multi-language localization support
-
-### 6.2 v1.0.0 (2026-03-21)
-
-- ✨ **Initial Release**
-- 🎯 **Configurable Birthday Property**: Support custom frontmatter property names (`birthday`, `date_of_birth`, `DOB`, etc.)
+### v1.0.0 (2026-03-21)
+- ✨ **Initial Release**
+- 🎯 Configurable birthday property support (`birthday`, `date_of_birth`, `DOB`, etc.)
 - 🎯 Intelligent birthday calculation and age calculation
 - 🌙 Lunar calendar conversion (using solarlunar library)
 - 🐉 Zodiac and animal sign display
@@ -205,6 +237,8 @@ birthday: 1990-05-20
 - 🌐 Chinese/English bilingual support
 - 📱 Responsive layout, automatically adapts to sidebar/main window
 - ⚙️ Rich configuration options
+
+</details>
 
 ---
 
@@ -225,7 +259,8 @@ MIT License
 
 - [GitHub Repository](https://github.com/ichris007/Obsidian-Birthday-Reminder)
 - [Issue Tracker](https://github.com/ichris007/Obsidian-Birthday-Reminder/issues)
-
+- [Lifein OS](https://lifein.vip/en) - A personal productivity and life management system built with Obsidian.
+ 
 ---
 
 ## 10 💡 FAQ
