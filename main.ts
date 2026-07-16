@@ -3,7 +3,7 @@ import { BirthdayReminderView, VIEW_TYPE } from './view';
 import { BirthdayReminderSettings, DEFAULT_SETTINGS, BirthdayReminderSettingTab } from './settings';
 
 export default class BirthdayReminderPlugin extends Plugin {
-  settings: BirthdayReminderSettings;
+  settings!: BirthdayReminderSettings;
 
   async onload() {
     await this.loadSettings();
@@ -108,8 +108,9 @@ export default class BirthdayReminderPlugin extends Plugin {
   }
   
   async loadSettings(): Promise<void> {
-    const data = await this.loadData() as Partial<BirthdayReminderSettings> | undefined;
-    this.settings = { ...DEFAULT_SETTINGS, ...(data ?? {}) } as BirthdayReminderSettings;
+    const data = await this.loadData();
+    const typedData = data as Partial<BirthdayReminderSettings> | undefined;
+    this.settings = { ...DEFAULT_SETTINGS, ...(typedData ?? {}) };
   }
 
   async saveSettings(): Promise<void> {

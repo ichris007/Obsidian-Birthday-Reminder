@@ -6,6 +6,11 @@ import { getLocale, Language, LocaleMessages } from './locales';
 
 export const VIEW_TYPE = 'birthday-reminder-view';
 
+// Type guard for frontmatter
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
 interface BirthdayData {
   name: string;
   path: string;
@@ -24,7 +29,7 @@ interface BirthdayData {
 }
 
 export class BirthdayReminderView extends ItemView {
-  plugin: BirthdayReminderPlugin;
+  private readonly plugin: BirthdayReminderPlugin;
   container: HTMLElement;
   refreshInterval: number;
   currentMonthOffset: number = 0;
@@ -33,6 +38,10 @@ export class BirthdayReminderView extends ItemView {
   constructor(leaf: WorkspaceLeaf, plugin: BirthdayReminderPlugin) {
     super(leaf);
     this.plugin = plugin;
+  }
+
+  private get settings(): Readonly<import('./settings').BirthdayReminderSettings> {
+    return this.plugin.settings;
   }
 
   getViewType(): string {
@@ -49,7 +58,7 @@ export class BirthdayReminderView extends ItemView {
   }
 
   private getLocale(): LocaleMessages {
-    return getLocale(this.plugin.settings.language as Language);
+    return getLocale(this.settings.language as Language);
   }
 
   async onOpen() {
@@ -116,7 +125,7 @@ export class BirthdayReminderView extends ItemView {
     this.container.addClass('birthday-reminder-view');
     this.container.addClass(this.getModeClass());
     
-    const settings = this.plugin.settings;
+    const settings = this.settings;
     const scheme = COLOR_SCHEMES[settings.colorScheme];
     const locale = this.getLocale();
     const birthdayProp = settings.birthdayProperty;
@@ -141,11 +150,11 @@ export class BirthdayReminderView extends ItemView {
       const cache = this.app.metadataCache.getFileCache(file);
       if (!cache) continue;
 
-      const frontmatter = cache.frontmatter;
-      if (typeof frontmatter !== 'object' || frontmatter === null) continue;
-      const frontmatterObj = frontmatter as Record<string, unknown>;
+      const frontmatterRaw = cache.frontmatter as unknown;
+      if (!isRecord(frontmatterRaw)) continue;
+      const frontmatter = frontmatterRaw;
 
-      const birthday = frontmatterObj[birthdayProp];
+      const birthday = frontmatter[birthdayProp];
       let birthDate: Date | null = null;
       if (typeof birthday === 'string') {
         birthDate = new Date(birthday);
@@ -301,7 +310,7 @@ export class BirthdayReminderView extends ItemView {
     const locale = this.getLocale();
     const section = this.container.createDiv({ cls: 'birthday-section' });
     const isSidebar = this.isSidebarMode();
-    const isEnglish = this.plugin.settings.language === 'en-us';
+    const isEnglish = this.settings.language === 'en-us';
     
     // 根据 sectionKey 获取标题文本
     let titleText = '';
@@ -337,14 +346,14 @@ export class BirthdayReminderView extends ItemView {
         itemEl.addClass('birthday-item-compact');
       }
       
-      if (item.isToday && this.plugin.settings.highlightToday) {
+      if (item.isToday && this.settings.highlightToday) {
         itemEl.addClass('birthday-item-today');
       } else if (item.daysRemaining <= 7) {
         itemEl.addClass('birthday-item-warning');
       }
       
       itemEl.addEventListener('click', () => {
-        void this.app.workspace.openLinkText(item.path, null, false);
+        void this.app.workspace.openLinkText(item.path, '', false);
       });
       
       const content = itemEl.createDiv({ cls: 'birthday-item-content' });

@@ -347,20 +347,7 @@ function getLocale(lang) {
 }
 
 // settings.ts
-var DEFAULT_SETTINGS = {
-  targetPath: "",
-  visibleMonths: 3,
-  colorScheme: "default",
-  enableLunar: true,
-  enableZodiac: true,
-  enableCalendar: true,
-  showStatistics: true,
-  highlightToday: true,
-  reminderDays: [7, 30],
-  language: "zh-cn",
-  birthdayProperty: "birthday"
-};
-var COLOR_SCHEMES = {
+var _colorSchemes = {
   default: {
     name: "\u9ED8\u8BA4",
     primary: "var(--interactive-accent)",
@@ -402,10 +389,95 @@ var COLOR_SCHEMES = {
     success: "rgba(76, 175, 80, 0.2)"
   }
 };
+var COLOR_SCHEMES = _colorSchemes;
+var DEFAULT_SETTINGS = {
+  targetPath: "",
+  visibleMonths: 3,
+  colorScheme: "default",
+  enableLunar: true,
+  enableZodiac: true,
+  enableCalendar: true,
+  showStatistics: true,
+  highlightToday: true,
+  reminderDays: [7, 30],
+  language: "zh-cn",
+  birthdayProperty: "birthday"
+};
 var BirthdayReminderSettingTab = class extends import_obsidian.PluginSettingTab {
   constructor(app, plugin) {
     super(app, plugin);
     this.plugin = plugin;
+  }
+  // 使用传统的display()方法，确保兼容性
+  display() {
+    const { containerEl } = this;
+    containerEl.empty();
+    const settings = this.plugin.settings;
+    const locale = this.getLocale();
+    new import_obsidian.Setting(containerEl).setName(locale.settingsTargetPath).setDesc(locale.settingsTargetPathDesc).addText((text) => text.setPlaceholder(locale.settingsTargetPathPlaceholder).setValue(settings.targetPath).onChange(async (value) => {
+      settings.targetPath = value;
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian.Setting(containerEl).setName(locale.settingsBirthdayProperty).setDesc(`${locale.settingsBirthdayPropertyDesc}
+
+\u793A\u4F8B\uFF1A
+birthday: 1990-05-20
+date_of_birth: 1990-05-20`).addText((text) => text.setPlaceholder(locale.settingsBirthdayPropertyPlaceholder).setValue(settings.birthdayProperty).onChange(async (value) => {
+      const newValue = value.trim();
+      settings.birthdayProperty = newValue || "birthday";
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian.Setting(containerEl).setName(locale.settingsVisibleMonths).setDesc(locale.settingsVisibleMonthsDesc).addSlider((slider) => slider.setLimits(1, 6, 1).setValue(settings.visibleMonths).onChange(async (value) => {
+      settings.visibleMonths = value;
+      await this.plugin.saveSettings();
+    }));
+    const colorOptions = {};
+    Object.keys(COLOR_SCHEMES).forEach((key) => {
+      colorOptions[key] = this.getColorSchemeName(key);
+    });
+    new import_obsidian.Setting(containerEl).setName(locale.settingsColorScheme).setDesc(locale.settingsColorSchemeDesc).addDropdown((dropdown) => {
+      Object.entries(colorOptions).forEach(([value, label]) => {
+        dropdown.addOption(value, label);
+      });
+      dropdown.setValue(settings.colorScheme);
+      dropdown.onChange(async (value) => {
+        settings.colorScheme = value;
+        await this.plugin.saveSettings();
+      });
+    });
+    const previewSetting = new import_obsidian.Setting(containerEl).setName("\u914D\u8272\u9884\u89C8").setDesc("");
+    const previewEl = previewSetting.controlEl.createDiv({ cls: "birthday-color-preview-box" });
+    const row1 = previewEl.createDiv({ cls: "birthday-color-preview-row" });
+    row1.createSpan({ cls: "birthday-color-preview-primary", text: "Primary" });
+    row1.createSpan({ cls: "birthday-color-preview-secondary", text: "Secondary" });
+    row1.createSpan({ cls: "birthday-color-preview-accent", text: "Accent" });
+    previewEl.createDiv({ cls: "birthday-color-preview-warning", text: "Warning" });
+    previewEl.createDiv({ cls: "birthday-color-preview-success", text: "Success" });
+    new import_obsidian.Setting(containerEl).setName(locale.settingsLanguage).setDesc(locale.settingsLanguageDesc).addDropdown((dropdown) => {
+      dropdown.addOption("zh-cn", "\u4E2D\u6587");
+      dropdown.addOption("en-us", "English");
+      dropdown.setValue(settings.language);
+      dropdown.onChange(async (value) => {
+        settings.language = value;
+        await this.plugin.saveSettings();
+      });
+    });
+    const toggles = [
+      { key: "enableLunar", name: locale.settingsEnableLunar, desc: locale.settingsEnableLunarDesc },
+      { key: "enableZodiac", name: locale.settingsEnableZodiac, desc: locale.settingsEnableZodiacDesc },
+      { key: "enableCalendar", name: locale.settingsEnableCalendar, desc: locale.settingsEnableCalendarDesc },
+      { key: "showStatistics", name: locale.settingsShowStatistics, desc: locale.settingsShowStatisticsDesc },
+      { key: "highlightToday", name: locale.settingsHighlightToday, desc: locale.settingsHighlightTodayDesc }
+    ];
+    for (const { key, name, desc } of toggles) {
+      new import_obsidian.Setting(containerEl).setName(name).setDesc(desc).addToggle((toggle) => toggle.setValue(settings[key]).onChange(async (value) => {
+        settings[key] = value;
+        await this.plugin.saveSettings();
+      }));
+    }
+  }
+  getSettingDefinitions() {
+    return [];
   }
   getLocale() {
     return getLocale(this.plugin.settings.language);
@@ -419,89 +491,7 @@ var BirthdayReminderSettingTab = class extends import_obsidian.PluginSettingTab 
       nature: locale.colorSchemeNature,
       purple: locale.colorSchemePurple
     };
-    return names[key] || key;
-  }
-  display() {
-    const { containerEl } = this;
-    containerEl.empty();
-    const locale = this.getLocale();
-    new import_obsidian.Setting(containerEl).setName(locale.settingsTitle).setHeading();
-    new import_obsidian.Setting(containerEl).setName(locale.settingsTargetPath).setDesc(locale.settingsTargetPathDesc).addText((text) => text.setPlaceholder(locale.settingsTargetPathPlaceholder).setValue(this.plugin.settings.targetPath).onChange((value) => {
-      this.plugin.settings.targetPath = value;
-      void this.plugin.saveSettings();
-    }));
-    new import_obsidian.Setting(containerEl).setName(locale.settingsBirthdayProperty).setDesc(locale.settingsBirthdayPropertyDesc).addText((text) => text.setPlaceholder(locale.settingsBirthdayPropertyPlaceholder).setValue(this.plugin.settings.birthdayProperty).onChange((value) => {
-      const newValue = value.trim();
-      this.plugin.settings.birthdayProperty = newValue || "birthday";
-      void this.plugin.saveSettings();
-    }));
-    const exampleEl = containerEl.createDiv({ cls: "setting-item-description" });
-    const exampleText1 = exampleEl.createSpan();
-    exampleText1.setText(`${locale.settingsBirthdayPropertyDesc} `);
-    const code1 = exampleEl.createSpan({ cls: "code-example" });
-    code1.setText(`${locale.settingsBirthdayPropertyPlaceholder}: 1990-05-20`);
-    const exampleText2 = exampleEl.createSpan();
-    exampleText2.setText(` - date_of_birth: `);
-    const code2 = exampleEl.createSpan({ cls: "code-example" });
-    code2.setText(`date_of_birth: 1990-05-20`);
-    new import_obsidian.Setting(containerEl).setName(locale.settingsVisibleMonths).setDesc(locale.settingsVisibleMonthsDesc).addSlider((slider) => slider.setLimits(1, 6, 1).setValue(this.plugin.settings.visibleMonths).onChange((value) => {
-      this.plugin.settings.visibleMonths = value;
-      void this.plugin.saveSettings();
-    }));
-    new import_obsidian.Setting(containerEl).setName(locale.settingsColorScheme).setDesc(locale.settingsColorSchemeDesc).addDropdown((dropdown) => {
-      Object.entries(COLOR_SCHEMES).forEach(([key, scheme]) => {
-        dropdown.addOption(key, this.getColorSchemeName(key));
-      });
-      dropdown.setValue(this.plugin.settings.colorScheme);
-      dropdown.onChange((value) => {
-        this.plugin.settings.colorScheme = value;
-        void this.plugin.saveSettings();
-        this.display();
-      });
-    });
-    const previewEl = containerEl.createDiv({ cls: "birthday-color-preview-box" });
-    const previewRow1 = previewEl.createDiv({ cls: "birthday-color-preview-row" });
-    const primarySpan = previewRow1.createSpan({ cls: "birthday-color-preview-primary" });
-    primarySpan.setText(locale.colorSchemeDefault);
-    const secondarySpan = previewRow1.createSpan({ cls: "birthday-color-preview-secondary" });
-    secondarySpan.setText(locale.colorSchemeDefault);
-    const accentSpan = previewRow1.createSpan({ cls: "birthday-color-preview-accent" });
-    accentSpan.setText(locale.colorSchemeDefault);
-    const warningDiv = previewEl.createDiv({ cls: "birthday-color-preview-warning" });
-    warningDiv.setText(locale.colorSchemeDefault);
-    const successDiv = previewEl.createDiv({ cls: "birthday-color-preview-success" });
-    successDiv.setText(locale.colorSchemeDefault);
-    new import_obsidian.Setting(containerEl).setName(locale.settingsLanguage).setDesc(locale.settingsLanguageDesc).addDropdown((dropdown) => {
-      dropdown.addOption("zh-cn", "\u4E2D\u6587");
-      dropdown.addOption("en-us", "English");
-      dropdown.setValue(this.plugin.settings.language);
-      dropdown.onChange((value) => {
-        this.plugin.settings.language = value;
-        void this.plugin.saveSettings().then(() => this.display()).catch((error) => {
-          console.error("Failed to save settings:", error);
-        });
-      });
-    });
-    new import_obsidian.Setting(containerEl).setName(locale.settingsEnableLunar).setDesc(locale.settingsEnableLunarDesc).addToggle((toggle) => toggle.setValue(this.plugin.settings.enableLunar).onChange((value) => {
-      this.plugin.settings.enableLunar = value;
-      void this.plugin.saveSettings();
-    }));
-    new import_obsidian.Setting(containerEl).setName(locale.settingsEnableZodiac).setDesc(locale.settingsEnableZodiacDesc).addToggle((toggle) => toggle.setValue(this.plugin.settings.enableZodiac).onChange((value) => {
-      this.plugin.settings.enableZodiac = value;
-      void this.plugin.saveSettings();
-    }));
-    new import_obsidian.Setting(containerEl).setName(locale.settingsEnableCalendar).setDesc(locale.settingsEnableCalendarDesc).addToggle((toggle) => toggle.setValue(this.plugin.settings.enableCalendar).onChange((value) => {
-      this.plugin.settings.enableCalendar = value;
-      void this.plugin.saveSettings();
-    }));
-    new import_obsidian.Setting(containerEl).setName(locale.settingsShowStatistics).setDesc(locale.settingsShowStatisticsDesc).addToggle((toggle) => toggle.setValue(this.plugin.settings.showStatistics).onChange((value) => {
-      this.plugin.settings.showStatistics = value;
-      void this.plugin.saveSettings();
-    }));
-    new import_obsidian.Setting(containerEl).setName(locale.settingsHighlightToday).setDesc(locale.settingsHighlightTodayDesc).addToggle((toggle) => toggle.setValue(this.plugin.settings.highlightToday).onChange((value) => {
-      this.plugin.settings.highlightToday = value;
-      void this.plugin.saveSettings();
-    }));
+    return names[key];
   }
 };
 
@@ -671,12 +661,18 @@ function getGanZhi(year) {
 
 // view.ts
 var VIEW_TYPE = "birthday-reminder-view";
+function isRecord(value) {
+  return typeof value === "object" && value !== null;
+}
 var BirthdayReminderView = class extends import_obsidian2.ItemView {
   constructor(leaf, plugin) {
     super(leaf);
     this.currentMonthOffset = 0;
     this.resizeObserver = null;
     this.plugin = plugin;
+  }
+  get settings() {
+    return this.plugin.settings;
   }
   getViewType() {
     return VIEW_TYPE;
@@ -689,7 +685,7 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
     return "cake";
   }
   getLocale() {
-    return getLocale(this.plugin.settings.language);
+    return getLocale(this.settings.language);
   }
   async onOpen() {
     this.container = this.contentEl;
@@ -738,7 +734,7 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
     this.container.empty();
     this.container.addClass("birthday-reminder-view");
     this.container.addClass(this.getModeClass());
-    const settings = this.plugin.settings;
+    const settings = this.settings;
     const scheme = COLOR_SCHEMES[settings.colorScheme];
     const locale = this.getLocale();
     const birthdayProp = settings.birthdayProperty;
@@ -757,13 +753,19 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
       const cache = this.app.metadataCache.getFileCache(file);
       if (!cache)
         continue;
-      const frontmatter = cache.frontmatter;
-      if (!frontmatter)
+      const frontmatterRaw = cache.frontmatter;
+      if (!isRecord(frontmatterRaw))
         continue;
+      const frontmatter = frontmatterRaw;
       const birthday = frontmatter[birthdayProp];
-      if (typeof birthday !== "string" && !(birthday instanceof Date))
+      let birthDate = null;
+      if (typeof birthday === "string") {
+        birthDate = new Date(birthday);
+      } else if (birthday instanceof Date) {
+        birthDate = birthday;
+      } else {
         continue;
-      const birthDate = birthday instanceof Date ? birthday : new Date(birthday);
+      }
       if (isNaN(birthDate.getTime()))
         continue;
       if (settings.targetPath && !file.path.startsWith(settings.targetPath))
@@ -878,7 +880,7 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
     const locale = this.getLocale();
     const section = this.container.createDiv({ cls: "birthday-section" });
     const isSidebar = this.isSidebarMode();
-    const isEnglish = this.plugin.settings.language === "en-us";
+    const isEnglish = this.settings.language === "en-us";
     let titleText = "";
     switch (sectionKey) {
       case "today":
@@ -908,7 +910,7 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
       if (isSidebar) {
         itemEl.addClass("birthday-item-compact");
       }
-      if (item.isToday && this.plugin.settings.highlightToday) {
+      if (item.isToday && this.settings.highlightToday) {
         itemEl.addClass("birthday-item-today");
       } else if (item.daysRemaining <= 7) {
         itemEl.addClass("birthday-item-warning");
@@ -1215,7 +1217,8 @@ var BirthdayReminderPlugin = class extends import_obsidian3.Plugin {
   }
   async loadSettings() {
     const data = await this.loadData();
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, data);
+    const typedData = data;
+    this.settings = { ...DEFAULT_SETTINGS, ...typedData != null ? typedData : {} };
   }
   async saveSettings() {
     await this.saveData(this.settings);
