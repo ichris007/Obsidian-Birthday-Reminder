@@ -792,12 +792,16 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
       if (settings.targetPath && !file.path.startsWith(settings.targetPath))
         continue;
       const currentYear = today.getFullYear();
-      let nextBirthday = new Date(currentYear, birthDate.getMonth(), birthDate.getDate());
+      const birthMonth = birthDate.getMonth();
+      const birthDay = birthDate.getDate();
+      let nextBirthday = new Date(currentYear, birthMonth, birthDay);
+      let nextBirthdayYear = currentYear;
       if (nextBirthday < today) {
-        nextBirthday = new Date(currentYear + 1, birthDate.getMonth(), birthDate.getDate());
+        nextBirthdayYear = currentYear + 1;
+        nextBirthday = new Date(nextBirthdayYear, birthMonth, birthDay);
       }
       const daysRemaining = Math.ceil((nextBirthday.getTime() - today.getTime()) / 864e5);
-      const age = nextBirthday.getFullYear() - birthDate.getFullYear();
+      const age = nextBirthdayYear - birthDate.getFullYear();
       let lunarInfo = null;
       if (settings.enableLunar) {
         const lunar = solarToLunar(birthDate, currentLanguage);

@@ -167,16 +167,25 @@ export class BirthdayReminderView extends ItemView {
 
       // 检查路径
       if (settings.targetPath && !file.path.startsWith(settings.targetPath)) continue;
-      
+
       // 计算下一个生日
       const currentYear = today.getFullYear();
-      let nextBirthday = new Date(currentYear, birthDate.getMonth(), birthDate.getDate());
+      const birthMonth = birthDate.getMonth();
+      const birthDay = birthDate.getDate();
+
+      // 先假设今年的生日
+      let nextBirthday = new Date(currentYear, birthMonth, birthDay);
+      let nextBirthdayYear = currentYear;
+
+      // 如果今年的生日已经过了，使用明年
       if (nextBirthday < today) {
-        nextBirthday = new Date(currentYear + 1, birthDate.getMonth(), birthDate.getDate());
+        nextBirthdayYear = currentYear + 1;
+        nextBirthday = new Date(nextBirthdayYear, birthMonth, birthDay);
       }
-      
+
       const daysRemaining = Math.ceil((nextBirthday.getTime() - today.getTime()) / 86400000);
-      const age = nextBirthday.getFullYear() - birthDate.getFullYear();
+      // 年龄 = 下一个生日的年份 - 出生年份
+      const age = nextBirthdayYear - birthDate.getFullYear();
       
       // 农历转换（根据语言格式化）
       let lunarInfo: string | null = null;
