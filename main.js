@@ -278,7 +278,8 @@ var zhCN = {
   colorSchemeWarm: "\u6E29\u6696\u6A59",
   colorSchemeCool: "\u6E05\u65B0\u84DD",
   colorSchemeNature: "\u81EA\u7136\u7EFF",
-  colorSchemePurple: "\u4F18\u96C5\u7D2B"
+  colorSchemePurple: "\u4F18\u96C5\u7D2B",
+  colorPreview: "\u914D\u8272\u9884\u89C8"
 };
 var enUS = {
   viewTitle: "Birthday Reminder",
@@ -335,7 +336,8 @@ var enUS = {
   colorSchemeWarm: "Warm Orange",
   colorSchemeCool: "Cool Blue",
   colorSchemeNature: "Nature Green",
-  colorSchemePurple: "Elegant Purple"
+  colorSchemePurple: "Elegant Purple",
+  colorPreview: "Color Preview"
 };
 var locales = {
   "zh-cn": zhCN,
@@ -418,16 +420,17 @@ var BirthdayReminderSettingTab = class extends import_obsidian.PluginSettingTab 
       settings.targetPath = value;
       await this.plugin.saveSettings();
     }));
+    const exampleLabel = settings.language === "zh-cn" ? "\u793A\u4F8B\uFF1A" : "Examples:";
     new import_obsidian.Setting(containerEl).setName(locale.settingsBirthdayProperty).setDesc(`${locale.settingsBirthdayPropertyDesc}
 
-\u793A\u4F8B\uFF1A
+${exampleLabel}
 birthday: 1990-05-20
 date_of_birth: 1990-05-20`).addText((text) => text.setPlaceholder(locale.settingsBirthdayPropertyPlaceholder).setValue(settings.birthdayProperty).onChange(async (value) => {
       const newValue = value.trim();
       settings.birthdayProperty = newValue || "birthday";
       await this.plugin.saveSettings();
     }));
-    new import_obsidian.Setting(containerEl).setName(locale.settingsVisibleMonths).setDesc(locale.settingsVisibleMonthsDesc).addSlider((slider) => slider.setLimits(1, 6, 1).setValue(settings.visibleMonths).onChange(async (value) => {
+    new import_obsidian.Setting(containerEl).setName(locale.settingsVisibleMonths).setDesc(locale.settingsVisibleMonthsDesc).addSlider((slider) => slider.setLimits(1, 6, 1).setValue(settings.visibleMonths).setDynamicTooltip().onChange(async (value) => {
       settings.visibleMonths = value;
       await this.plugin.saveSettings();
     }));
@@ -442,17 +445,34 @@ date_of_birth: 1990-05-20`).addText((text) => text.setPlaceholder(locale.setting
       dropdown.setValue(settings.colorScheme);
       dropdown.onChange(async (value) => {
         settings.colorScheme = value;
+        updateColorPreview();
         await this.plugin.saveSettings();
       });
     });
-    const previewSetting = new import_obsidian.Setting(containerEl).setName("\u914D\u8272\u9884\u89C8").setDesc("");
+    const previewSetting = new import_obsidian.Setting(containerEl).setName(locale.colorPreview).setDesc("");
     const previewEl = previewSetting.controlEl.createDiv({ cls: "birthday-color-preview-box" });
     const row1 = previewEl.createDiv({ cls: "birthday-color-preview-row" });
-    row1.createSpan({ cls: "birthday-color-preview-primary", text: "Primary" });
-    row1.createSpan({ cls: "birthday-color-preview-secondary", text: "Secondary" });
-    row1.createSpan({ cls: "birthday-color-preview-accent", text: "Accent" });
-    previewEl.createDiv({ cls: "birthday-color-preview-warning", text: "Warning" });
-    previewEl.createDiv({ cls: "birthday-color-preview-success", text: "Success" });
+    const primarySpan = row1.createSpan({ cls: "birthday-color-preview-primary", text: "Primary" });
+    const secondarySpan = row1.createSpan({ cls: "birthday-color-preview-secondary", text: "Secondary" });
+    const accentSpan = row1.createSpan({ cls: "birthday-color-preview-accent", text: "Accent" });
+    const warningDiv = previewEl.createDiv({ cls: "birthday-color-preview-warning", text: "Warning" });
+    const successDiv = previewEl.createDiv({ cls: "birthday-color-preview-success", text: "Success" });
+    const updateColorPreview = () => {
+      const scheme = COLOR_SCHEMES[settings.colorScheme];
+      if (scheme) {
+        primarySpan.style.color = scheme.primary;
+        primarySpan.style.backgroundColor = scheme.primary;
+        secondarySpan.style.color = scheme.secondary;
+        secondarySpan.style.backgroundColor = scheme.secondary;
+        accentSpan.style.color = scheme.accent;
+        accentSpan.style.backgroundColor = scheme.accent;
+        warningDiv.style.color = scheme.warning;
+        warningDiv.style.backgroundColor = scheme.warning;
+        successDiv.style.color = scheme.success;
+        successDiv.style.backgroundColor = scheme.success;
+      }
+    };
+    updateColorPreview();
     new import_obsidian.Setting(containerEl).setName(locale.settingsLanguage).setDesc(locale.settingsLanguageDesc).addDropdown((dropdown) => {
       dropdown.addOption("zh-cn", "\u4E2D\u6587");
       dropdown.addOption("en-us", "English");
@@ -460,6 +480,7 @@ date_of_birth: 1990-05-20`).addText((text) => text.setPlaceholder(locale.setting
       dropdown.onChange(async (value) => {
         settings.language = value;
         await this.plugin.saveSettings();
+        this.display();
       });
     });
     const toggles = [

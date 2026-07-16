@@ -68,13 +68,17 @@ export interface LocaleMessages {
   settingsHighlightTodayDesc: string;
   settingsLanguage: string;
   settingsLanguageDesc: string;
-  
+
   // 配色方案名称
   colorSchemeDefault: string;
   colorSchemeWarm: string;
   colorSchemeCool: string;
   colorSchemeNature: string;
   colorSchemePurple: string;
+
+  // 配色预览
+  colorPreview: string;
+  colorPreviewDesc?: string;
 }
 
 // 中文语言包
@@ -143,6 +147,8 @@ const zhCN: LocaleMessages = {
   colorSchemeCool: '清新蓝',
   colorSchemeNature: '自然绿',
   colorSchemePurple: '优雅紫',
+
+  colorPreview: '配色预览',
 };
 
 // 英文语言包
@@ -211,6 +217,8 @@ const enUS: LocaleMessages = {
   colorSchemeCool: 'Cool Blue',
   colorSchemeNature: 'Nature Green',
   colorSchemePurple: 'Elegant Purple',
+
+  colorPreview: 'Color Preview',
 };
 
 // 语言映射

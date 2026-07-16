@@ -116,9 +116,10 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
         }));
 
     // Birthday Property
+    const exampleLabel = settings.language === 'zh-cn' ? '示例：' : 'Examples:';
     new Setting(containerEl)
       .setName(locale.settingsBirthdayProperty)
-      .setDesc(`${locale.settingsBirthdayPropertyDesc}\n\n示例：\nbirthday: 1990-05-20\ndate_of_birth: 1990-05-20`)
+      .setDesc(`${locale.settingsBirthdayPropertyDesc}\n\n${exampleLabel}\nbirthday: 1990-05-20\ndate_of_birth: 1990-05-20`)
       .addText(text => text
         .setPlaceholder(locale.settingsBirthdayPropertyPlaceholder)
         .setValue(settings.birthdayProperty)
@@ -135,6 +136,7 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
       .addSlider(slider => slider
         .setLimits(1, 6, 1)
         .setValue(settings.visibleMonths)
+        .setDynamicTooltip()
         .onChange(async (value) => {
           settings.visibleMonths = value;
           await this.plugin.saveSettings();
@@ -155,34 +157,56 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
         dropdown.setValue(settings.colorScheme);
         dropdown.onChange(async (value) => {
           settings.colorScheme = value as ColorSchemeKey;
+          updateColorPreview(); // 更新预览颜色
           await this.plugin.saveSettings();
         });
       });
 
-    // Color Preview
+    // Color Preview (放在配色方案下方)
     const previewSetting = new Setting(containerEl)
-      .setName('配色预览')
-      .setDesc('');
+      .setName(locale.colorPreview)
+      .setDesc(''); // 可以留空或添加描述
 
     const previewEl = previewSetting.controlEl.createDiv({ cls: 'birthday-color-preview-box' });
     const row1 = previewEl.createDiv({ cls: 'birthday-color-preview-row' });
-    row1.createSpan({ cls: 'birthday-color-preview-primary', text: 'Primary' });
-    row1.createSpan({ cls: 'birthday-color-preview-secondary', text: 'Secondary' });
-    row1.createSpan({ cls: 'birthday-color-preview-accent', text: 'Accent' });
-    previewEl.createDiv({ cls: 'birthday-color-preview-warning', text: 'Warning' });
-    previewEl.createDiv({ cls: 'birthday-color-preview-success', text: 'Success' });
+    const primarySpan = row1.createSpan({ cls: 'birthday-color-preview-primary', text: 'Primary' });
+    const secondarySpan = row1.createSpan({ cls: 'birthday-color-preview-secondary', text: 'Secondary' });
+    const accentSpan = row1.createSpan({ cls: 'birthday-color-preview-accent', text: 'Accent' });
+    const warningDiv = previewEl.createDiv({ cls: 'birthday-color-preview-warning', text: 'Warning' });
+    const successDiv = previewEl.createDiv({ cls: 'birthday-color-preview-success', text: 'Success' });
+
+    // 根据当前配色方案更新预览颜色
+    const updateColorPreview = () => {
+      const scheme = COLOR_SCHEMES[settings.colorScheme];
+      if (scheme) {
+        primarySpan.style.color = scheme.primary;
+        primarySpan.style.backgroundColor = scheme.primary;
+        secondarySpan.style.color = scheme.secondary;
+        secondarySpan.style.backgroundColor = scheme.secondary;
+        accentSpan.style.color = scheme.accent;
+        accentSpan.style.backgroundColor = scheme.accent;
+        warningDiv.style.color = scheme.warning;
+        warningDiv.style.backgroundColor = scheme.warning;
+        successDiv.style.color = scheme.success;
+        successDiv.style.backgroundColor = scheme.success;
+      }
+    };
+    updateColorPreview();
 
     // Language
     new Setting(containerEl)
       .setName(locale.settingsLanguage)
       .setDesc(locale.settingsLanguageDesc)
       .addDropdown(dropdown => {
+        // 语言选项标签使用该语言的本体名称
         dropdown.addOption('zh-cn', '中文');
         dropdown.addOption('en-us', 'English');
         dropdown.setValue(settings.language);
         dropdown.onChange(async (value) => {
           settings.language = value;
           await this.plugin.saveSettings();
+          // 语言切换后重新渲染设置界面
+          this.display();
         });
       });
 
