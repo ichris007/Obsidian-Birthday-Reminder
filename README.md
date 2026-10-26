@@ -2,6 +2,9 @@
 
 [English](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/README.md) | [中文文档](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/README-ZH.md)
 
+[![Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%237c3aed&label=downloads&query=%24%5B%22birthday-reminder%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)](https://obsidian.md/plugins?id=birthday-reminder) ![Obsidian](https://img.shields.io/badge/dynamic/json?query=%24.minAppVersion&url=https%3A%2F%2Fraw.githubusercontent.com%2Fichris007%2FObsidian-Birthday-Reminder%2Fmain%2Fmanifest.json&label=Obsidian&color=7c3aed&prefix=v) [![License](https://img.shields.io/github/license/ichris007/Obsidian-Birthday-Reminder)](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/LICENSE)
+[Report a bug](https://github.com/ichris007/Obsidian-Birthday-Reminder/issues/new) · [Request a feature](https://github.com/ichris007/Obsidian-Birthday-Reminder/issues/new)
+
 An Obsidian plugin designed to help you easily manage important birthday information for friends, family, colleagues, and clients. The plugin supports Gregorian/Lunar calendar conversion, zodiac and Chinese animal sign display, intelligent calendar view, and automatically adapts to sidebar and main window layouts.
 
 Whether you use Obsidian for personal life management or as a CRM tool for client relationships, this plugin makes birthday reminders elegant and efficient.
