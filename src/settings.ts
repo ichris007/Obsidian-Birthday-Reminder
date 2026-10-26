@@ -217,6 +217,8 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
         dropdown.onChange(async (value) => {
           settings.language = value;
           await this.plugin.saveSettings();
+          // 命令面板与 ribbon 提示只在 onload 注册一次，切语言必须显式同步，否则要重启才变
+          this.plugin.refreshLocalizedText();
           // 语言切换后重新渲染设置界面
           this.display();
         });
@@ -235,17 +237,14 @@ export class BirthdayReminderSettingTab extends PluginSettingTab {
         }));
 
     // Color Scheme
-    const colorOptions: Record<string, string> = {};
-    (Object.keys(COLOR_SCHEMES) as Array<ColorSchemeKey>).forEach(key => {
-      colorOptions[key] = this.getColorSchemeName(key);
-    });
+    // 用 Object.keys 而不是 Object.entries：后者属 ES2017，lib 只到 ES7 时会退化成 any
     new Setting(containerEl)
       .setName(locale.settingsColorScheme)
       .setDesc(locale.settingsColorSchemeDesc)
       .addDropdown(dropdown => {
-        Object.entries(colorOptions).forEach(([value, label]) => {
-          dropdown.addOption(value, label);
-        });
+        for (const key of Object.keys(COLOR_SCHEMES) as ColorSchemeKey[]) {
+          dropdown.addOption(key, this.getColorSchemeName(key));
+        }
         dropdown.setValue(settings.colorScheme);
         dropdown.onChange(async (value) => {
           settings.colorScheme = value as ColorSchemeKey;

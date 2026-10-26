@@ -306,8 +306,8 @@ var zhCN = {
   notifyDaysSuffix: "\u5929\u540E",
   notifyMore: "\u7B49 {count} \u4EBA",
   notifyNothing: "\u4ECA\u5929\u6CA1\u6709\u9700\u8981\u63D0\u9192\u7684\u751F\u65E5",
-  commandShowPanel: "\u663E\u793A\u751F\u65E5\u63D0\u9192\u9762\u677F",
-  commandCheckReminders: "\u68C0\u67E5\u4ECA\u65E5\u751F\u65E5\u63D0\u9192",
+  commandShowPanel: "Birthday Reminder: \u663E\u793A\u751F\u65E5\u63D0\u9192\u9762\u677F",
+  commandCheckReminders: "Birthday Reminder: \u68C0\u67E5\u4ECA\u65E5\u751F\u65E5\u63D0\u9192",
   ribbonTooltip: "\u751F\u65E5\u63D0\u9192",
   colorSchemeDefault: "\u9ED8\u8BA4",
   colorSchemeWarm: "\u6E29\u6696\u6A59",
@@ -399,8 +399,8 @@ var enUS = {
   notifyDaysSuffix: "d away",
   notifyMore: "and {count} more",
   notifyNothing: "No birthdays to remind today",
-  commandShowPanel: "Show birthday panel",
-  commandCheckReminders: "Check today's birthday reminders",
+  commandShowPanel: "Birthday Reminder: Show birthday panel",
+  commandCheckReminders: "Birthday Reminder: Check today's birthday reminders",
   ribbonTooltip: "Birthday Reminder",
   colorSchemeDefault: "Default",
   colorSchemeWarm: "Warm Orange",
@@ -532,6 +532,7 @@ lunar_birthday: 2023-02L-01`).addText((text) => text.setPlaceholder(locale.setti
       dropdown.onChange(async (value) => {
         settings.language = value;
         await this.plugin.saveSettings();
+        this.plugin.refreshLocalizedText();
         this.display();
       });
     });
@@ -539,14 +540,10 @@ lunar_birthday: 2023-02L-01`).addText((text) => text.setPlaceholder(locale.setti
       settings.visibleMonths = value;
       await this.plugin.saveSettings();
     }));
-    const colorOptions = {};
-    Object.keys(COLOR_SCHEMES).forEach((key) => {
-      colorOptions[key] = this.getColorSchemeName(key);
-    });
     new import_obsidian.Setting(containerEl).setName(locale.settingsColorScheme).setDesc(locale.settingsColorSchemeDesc).addDropdown((dropdown) => {
-      Object.entries(colorOptions).forEach(([value, label]) => {
-        dropdown.addOption(value, label);
-      });
+      for (const key of Object.keys(COLOR_SCHEMES)) {
+        dropdown.addOption(key, this.getColorSchemeName(key));
+      }
       dropdown.setValue(settings.colorScheme);
       dropdown.onChange(async (value) => {
         settings.colorScheme = value;
@@ -643,10 +640,11 @@ function parseDateOnly(value) {
     return null;
   return makeDateOnly(parsed.getFullYear(), parsed.getMonth() + 1, parsed.getDate());
 }
+function pad2(value) {
+  return value < 10 ? `0${value}` : `${value}`;
+}
 function toDateKey(date) {
-  const month = String(date.month).padStart(2, "0");
-  const day = String(date.day).padStart(2, "0");
-  return `${date.year}-${month}-${day}`;
+  return `${date.year}-${pad2(date.month)}-${pad2(date.day)}`;
 }
 function birthdaySignature(value) {
   const parsed = parseDateOnly(value);
@@ -671,9 +669,7 @@ function parseLunarDate(value) {
   return { year, month, day, isLeap: matched[3] !== "" };
 }
 function lunarKey(value) {
-  const month = String(value.month).padStart(2, "0");
-  const day = String(value.day).padStart(2, "0");
-  return `${value.year}-${month}${value.isLeap ? "L" : ""}-${day}`;
+  return `${value.year}-${pad2(value.month)}${value.isLeap ? "L" : ""}-${pad2(value.day)}`;
 }
 function toLocalDate(date) {
   return new Date(date.year, date.month - 1, date.day, 12, 0, 0, 0);
@@ -1682,7 +1678,7 @@ var ReminderService = class {
     }
     const notice = new import_obsidian3.Notice(`${summary.title}
 ${body}`, 15e3);
-    notice.noticeEl.addEventListener("click", () => void this.plugin.activateView());
+    notice.messageEl.addEventListener("click", () => void this.plugin.activateView());
   }
   /**
    * 系统通知是否可用：桌面端 + API 存在 + 没被用户拒绝。
@@ -1714,15 +1710,15 @@ var BirthdayReminderPlugin = class extends import_obsidian4.Plugin {
       }
     );
     const locale = getLocale(this.settings.language);
-    this.addRibbonIcon("cake", locale.ribbonTooltip, () => {
+    this.ribbonEl = this.addRibbonIcon("cake", locale.ribbonTooltip, () => {
       void this.activateView();
     });
-    this.addCommand({
+    this.commandShow = this.addCommand({
       id: "show",
       name: locale.commandShowPanel,
       callback: () => void this.activateView()
     });
-    this.addCommand({
+    this.commandCheck = this.addCommand({
       id: "check-reminders",
       name: locale.commandCheckReminders,
       callback: () => this.reminder.check(true)
@@ -1761,6 +1757,20 @@ var BirthdayReminderPlugin = class extends import_obsidian4.Plugin {
       }
     }
   }
+  /**
+   * 语言切换后同步命令面板与 ribbon 提示。
+   * `addCommand` / `addRibbonIcon` 只在 onload 执行一次，命令名不会跟着设置走：
+   * 不同步的话，切成英文只改了视图和设置页，命令面板里仍然是中文，要重启才生效。
+   */
+  refreshLocalizedText() {
+    const locale = getLocale(this.settings.language);
+    if (this.commandShow)
+      this.commandShow.name = locale.commandShowPanel;
+    if (this.commandCheck)
+      this.commandCheck.name = locale.commandCheckReminders;
+    if (this.ribbonEl)
+      this.ribbonEl.setAttribute("aria-label", locale.ribbonTooltip);
+  }
   async activateView() {
     const { workspace } = this.app;
     const leaves = workspace.getLeavesOfType(VIEW_TYPE);
@@ -1784,8 +1794,7 @@ var BirthdayReminderPlugin = class extends import_obsidian4.Plugin {
   }
   async loadSettings() {
     const data = await this.loadData();
-    const typedData = data;
-    this.settings = { ...DEFAULT_SETTINGS, ...typedData != null ? typedData : {} };
+    this.settings = { ...DEFAULT_SETTINGS, ...data != null ? data : {} };
   }
   async saveSettings() {
     await this.saveData(this.settings);
@@ -1794,6 +1803,5 @@ var BirthdayReminderPlugin = class extends import_obsidian4.Plugin {
   onunload() {
     var _a;
     (_a = this.reminder) == null ? void 0 : _a.stop();
-    this.app.workspace.detachLeavesOfType(VIEW_TYPE);
   }
 };

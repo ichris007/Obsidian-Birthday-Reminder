@@ -159,7 +159,8 @@ export class ReminderService {
     }
 
     const notice = new Notice(`${summary.title}\n${body}`, 15000);
-    notice.noticeEl.addEventListener('click', () => void this.plugin.activateView());
+    // messageEl 替代已弃用的 noticeEl（since 1.8.7，本插件 minAppVersion 1.12.7）
+    notice.messageEl.addEventListener('click', () => void this.plugin.activateView());
   }
 
   /**

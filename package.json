@@ -1,6 +1,6 @@
 {
   "name": "obsidian-birthday-reminder",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Birthday reminder with lunar calendar, zodiac and constellation support",
   "main": "main.js",
   "scripts": {

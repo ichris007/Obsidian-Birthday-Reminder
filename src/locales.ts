@@ -232,8 +232,8 @@ const zhCN: LocaleMessages = {
   notifyMore: '等 {count} 人',
   notifyNothing: '今天没有需要提醒的生日',
 
-  commandShowPanel: '显示生日提醒面板',
-  commandCheckReminders: '检查今日生日提醒',
+  commandShowPanel: 'Birthday Reminder: 显示生日提醒面板',
+  commandCheckReminders: 'Birthday Reminder: 检查今日生日提醒',
   ribbonTooltip: '生日提醒',
   
   colorSchemeDefault: '默认',
@@ -344,8 +344,8 @@ const enUS: LocaleMessages = {
   notifyMore: 'and {count} more',
   notifyNothing: 'No birthdays to remind today',
 
-  commandShowPanel: 'Show birthday panel',
-  commandCheckReminders: "Check today's birthday reminders",
+  commandShowPanel: 'Birthday Reminder: Show birthday panel',
+  commandCheckReminders: "Birthday Reminder: Check today's birthday reminders",
   ribbonTooltip: 'Birthday Reminder',
   
   colorSchemeDefault: 'Default',

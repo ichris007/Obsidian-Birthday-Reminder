@@ -62,10 +62,18 @@ export function parseDateOnly(value: unknown): DateOnly | null {
   return makeDateOnly(parsed.getFullYear(), parsed.getMonth() + 1, parsed.getDate());
 }
 
+/**
+ * 两位补零。
+ * 不用 `String(n).padStart(2, '0')`：`padStart` 属于 ES2017，本项目的 lib 只到 ES7，
+ * 类型声明是靠 @types/node 的 `reference lib="es2020"` 间接带来的；审核环境的类型检查
+ * 不加载 node types 时会退化成 any，触发 no-unsafe-call / no-unsafe-assignment。
+ */
+function pad2(value: number): string {
+  return value < 10 ? `0${value}` : `${value}`;
+}
+
 export function toDateKey(date: DateOnly): string {
-  const month = String(date.month).padStart(2, '0');
-  const day = String(date.day).padStart(2, '0');
-  return `${date.year}-${month}-${day}`;
+  return `${date.year}-${pad2(date.month)}-${pad2(date.day)}`;
 }
 
 /** 归一化签名：字符串、Date、时间戳都能比，用于判断属性值是否真的变了 */
@@ -100,9 +108,7 @@ export function parseLunarDate(value: unknown): LunarInput | null {
 }
 
 export function lunarKey(value: LunarInput): string {
-  const month = String(value.month).padStart(2, '0');
-  const day = String(value.day).padStart(2, '0');
-  return `${value.year}-${month}${value.isLeap ? 'L' : ''}-${day}`;
+  return `${value.year}-${pad2(value.month)}${value.isLeap ? 'L' : ''}-${pad2(value.day)}`;
 }
 
 /** 构造本地正午的 Date，交给 solarlunar 时不会被 DST 的零点跳变影响 */

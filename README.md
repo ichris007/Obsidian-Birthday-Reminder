@@ -118,7 +118,7 @@ Today: John (36 years old), Mary (30 years old)
 - Desktop uses a system notification; mobile or an unavailable notification API falls back to an in-app notice
 - Clicking the notification opens the birthday panel
 - At most one reminder per day, so it never becomes noise
-- The command "Check today's birthday reminders" shows what would be sent right now. It only uses an in-app notice and does not consume the day's slot, so testing in the morning does not suppress the 9 AM reminder
+- The command "Birthday Reminder: Check today's birthday reminders" shows what would be sent right now. It only uses an in-app notice and does not consume the day's slot, so testing in the morning does not suppress the 9 AM reminder
 
 ### 3.5 Lunar Birthdays
 
@@ -236,12 +236,18 @@ If a note has both the Gregorian and lunar properties, it produces two entries (
 ### 5.3 Usage
 
 - Click the cake icon 🎂 in the left sidebar to open the birthday reminder panel
-- Or use the Command Palette (Ctrl/Cmd + P) and type "Show birthday panel"
-- "Check today's birthday reminders" in the Command Palette shows what would be sent today, without affecting the automatic reminder
+- Or use the Command Palette (Ctrl/Cmd + P) and type "Birthday Reminder: Show birthday panel"
+- "Birthday Reminder: Check today's birthday reminders" in the Command Palette shows what would be sent today, without affecting the automatic reminder
 
 ---
 
 ## 6 📝 Changelog
+
+### v1.6.1 (2026-10-26)
+- ✅ **Marketplace review fixes** – `onunload` no longer detaches leaves (that used to snap the panel back to its default location even after you moved it). Swapped the deprecated `Notice.noticeEl` for `messageEl`
+- 🌐 **Language switch** – Switching the interface language now also renames the command palette entries and the ribbon tooltip immediately; previously they kept the language they were registered with until Obsidian restarted
+- 🏷️ **Command names** – Both commands now carry the plugin name as a prefix ("Birthday Reminder: Show birthday panel", "Birthday Reminder: Check today's birthday reminders"), so they group together in the command palette instead of scattering among other plugins' "show panel" commands
+- 🛡️ **Type safety** – Removed ES2017 built-ins (`padStart`, `Object.entries`) that degrade to `any` when `@types/node` is not in the type environment, and added `ES2017` to `tsconfig`'s `lib` so the compiler no longer depends on that reference
 
 ### v1.6.0 (2026-10-26)
 - 🔔 **Daily reminder** – One notification per day (desktop system notification, `Notice` on mobile) summarizing today and the next N days; click it to open the panel. Falls back to an in-app notice when notification permission is denied. New command "Check today's birthday reminders", which always answers with an in-app notice so it stays visible even when the OS silently drops system notifications
@@ -355,7 +361,7 @@ A: Yes! The plugin automatically detects window width – switches to compact mo
 A: Add `lunar_birthday: 1990-04-26` to the note's frontmatter, where the year is the lunar year. For a leap month, append `L` to the month: `lunar_birthday: 2023-02L-01`. If a particular year has no such leap month, the plugin falls back to the regular month. To use a different property name, change "Lunar Birthday Property" in settings; leave it empty to disable lunar birthdays.
 
 ### 10.6 Q: When does the daily reminder fire?
-A: Once a day, on the first check after the configured time (default `09:00`), and only if there is something to report. On desktop it uses a system notification, on mobile a notice. Clicking it opens the panel. You can also run "Check today's birthday reminders" manually at any time.
+A: Once a day, on the first check after the configured time (default `09:00`), and only if there is something to report. On desktop it uses a system notification, on mobile a notice. Clicking it opens the panel. You can also run "Birthday Reminder: Check today's birthday reminders" manually at any time.
 
 ### 10.7 Q: Can I search by alias?
 A: Yes. The plugin reads the `aliases` property by default and matches both name and aliases:
@@ -376,4 +382,4 @@ A: Check these in order:
 2. Has today's reminder already fired? Only one is sent per day — clear `lastNotifiedDate` in the plugin data to test again
 3. **macOS users**: Electron's `Notification.permission` is always `granted` on macOS, so the plugin cannot tell whether the master switch under System Settings → Notifications → Obsidian is off. If it is off, automatic reminders fail silently. Verify Obsidian's notification permission there and check whether Focus/Do Not Disturb is enabled
 
-To confirm the plugin itself is fine, run "Check today's birthday reminders" — it always answers with an in-app notice. If it shows content, your data is fine and the problem is the system notification permission.
+To confirm the plugin itself is fine, run "Birthday Reminder: Check today's birthday reminders" — it always answers with an in-app notice. If it shows content, your data is fine and the problem is the system notification permission.
