@@ -208,21 +208,21 @@ var require_solarlunar_min = __commonJS({
   }
 });
 
-// main.ts
+// src/main.ts
 var main_exports = {};
 __export(main_exports, {
   default: () => BirthdayReminderPlugin
 });
 module.exports = __toCommonJS(main_exports);
-var import_obsidian3 = require("obsidian");
+var import_obsidian4 = require("obsidian");
 
-// view.ts
+// src/view.ts
 var import_obsidian2 = require("obsidian");
 
-// settings.ts
+// src/settings.ts
 var import_obsidian = require("obsidian");
 
-// locales.ts
+// src/locales.ts
 var zhCN = {
   viewTitle: "\u751F\u65E5\u63D0\u9192",
   statsTotal: "\u603B\u4EBA\u6570",
@@ -245,7 +245,17 @@ var zhCN = {
   lunarPrefix: "\u519C\u5386",
   ageUnit: "\u5C81",
   ageUnitEn: "years old",
+  searchPlaceholder: "\u641C\u7D22\u59D3\u540D\u6216\u522B\u540D\u2026",
+  sortByDays: "\u6309\u5269\u4F59\u5929\u6570",
+  sortByName: "\u6309\u59D3\u540D",
+  sortByAge: "\u6309\u5E74\u9F84",
+  noMatch: "\u6CA1\u6709\u5339\u914D\u7684\u4EBA",
+  clearSearch: "\u6E05\u9664\u641C\u7D22",
+  aliasHint: "\u522B\u540D\uFF1A{alias}",
+  showAllLater: "\u663E\u793A\u5168\u90E8\uFF08{count}\uFF09",
+  collapseLater: "\u6536\u8D77",
   calendarWeekdays: ["\u65E5", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D"],
+  monthTitlePattern: "{year}\u5E74{month}\u6708",
   prevMonth: "\u25C0 \u4E0A\u6708",
   todayButton: "\u4ECA\u5929",
   nextMonth: "\u4E0B\u6708 \u25B6",
@@ -274,6 +284,31 @@ var zhCN = {
   settingsHighlightTodayDesc: "\u4ECA\u65E5\u751F\u65E5\u7684\u5361\u7247\u7279\u6B8A\u9AD8\u4EAE\u663E\u793A",
   settingsLanguage: "\u8BED\u8A00",
   settingsLanguageDesc: "\u9009\u62E9\u754C\u9762\u8BED\u8A00",
+  settingsSourceSection: "\u6570\u636E\u6E90",
+  settingsDisplaySection: "\u663E\u793A",
+  settingsNotifySection: "\u63D0\u9192",
+  settingsLunarProperty: "\u519C\u5386\u751F\u65E5\u5C5E\u6027",
+  settingsLunarPropertyDesc: "\u7B14\u8BB0\u4E2D\u8BB0\u5F55\u519C\u5386\u751F\u65E5\u7684\u5C5E\u6027\u540D\uFF0C\u683C\u5F0F YYYY-MM-DD\uFF0C\u95F0\u6708\u5199\u6210 2023-02L-01\u3002\u7559\u7A7A\u5219\u5173\u95ED\u519C\u5386\u751F\u65E5",
+  settingsLunarPropertyPlaceholder: "lunar_birthday",
+  settingsAliasProperty: "\u522B\u540D\u5C5E\u6027",
+  settingsAliasPropertyDesc: "\u7B14\u8BB0\u4E2D\u8BB0\u5F55\u522B\u540D\u7684\u5C5E\u6027\u540D\uFF0C\u641C\u7D22\u65F6\u59D3\u540D\u548C\u522B\u540D\u90FD\u4F1A\u88AB\u5339\u914D\u3002\u652F\u6301 YAML \u5217\u8868\u6216\u9017\u53F7\u5206\u9694\u7684\u4E00\u884C\u6587\u672C\uFF0C\u7559\u7A7A\u5219\u53EA\u6309\u59D3\u540D\u641C\u7D22",
+  settingsAliasPropertyPlaceholder: "aliases",
+  settingsNotifyEnabled: "\u542F\u7528\u6BCF\u65E5\u63D0\u9192",
+  settingsNotifyEnabledDesc: "\u5230\u70B9\u540E\u53D1\u4E00\u6761\u7CFB\u7EDF\u901A\u77E5\uFF0C\u6C47\u603B\u4ECA\u5929\u548C\u5373\u5C06\u5230\u6765\u7684\u751F\u65E5",
+  settingsNotifyTime: "\u63D0\u9192\u65F6\u95F4",
+  settingsNotifyTimeDesc: "\u6BCF\u5929\u5728\u8FD9\u4E2A\u65F6\u95F4\u4E4B\u540E\u68C0\u67E5\u4E00\u6B21\uFF0824 \u5C0F\u65F6\u5236\uFF09",
+  settingsNotifyTimePlaceholder: "09:00",
+  settingsReminderDays: "\u63D0\u524D\u63D0\u9192\u5929\u6570",
+  settingsReminderDaysDesc: "\u5728\u751F\u65E5\u524D\u51E0\u5929\u4E00\u8D77\u63D0\u9192\uFF0C\u9017\u53F7\u5206\u9694\u3002\u5F53\u5929\u751F\u65E5\u59CB\u7EC8\u63D0\u9192",
+  settingsReminderDaysPlaceholder: "1,3,7",
+  notifyTitle: "\u751F\u65E5\u63D0\u9192",
+  notifyTodayLabel: "\u4ECA\u5929",
+  notifyDaysSuffix: "\u5929\u540E",
+  notifyMore: "\u7B49 {count} \u4EBA",
+  notifyNothing: "\u4ECA\u5929\u6CA1\u6709\u9700\u8981\u63D0\u9192\u7684\u751F\u65E5",
+  commandShowPanel: "\u663E\u793A\u751F\u65E5\u63D0\u9192\u9762\u677F",
+  commandCheckReminders: "\u68C0\u67E5\u4ECA\u65E5\u751F\u65E5\u63D0\u9192",
+  ribbonTooltip: "\u751F\u65E5\u63D0\u9192",
   colorSchemeDefault: "\u9ED8\u8BA4",
   colorSchemeWarm: "\u6E29\u6696\u6A59",
   colorSchemeCool: "\u6E05\u65B0\u84DD",
@@ -303,7 +338,17 @@ var enUS = {
   lunarPrefix: "Lunar",
   ageUnit: "years old",
   ageUnitEn: "years old",
+  searchPlaceholder: "Search name or alias\u2026",
+  sortByDays: "By days left",
+  sortByName: "By name",
+  sortByAge: "By age",
+  noMatch: "No matching person",
+  clearSearch: "Clear search",
+  aliasHint: "Alias: {alias}",
+  showAllLater: "Show all ({count})",
+  collapseLater: "Collapse",
   calendarWeekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  monthTitlePattern: "{month}/{year}",
   prevMonth: "\u25C0 Prev",
   todayButton: "Today",
   nextMonth: "Next \u25B6",
@@ -332,6 +377,31 @@ var enUS = {
   settingsHighlightTodayDesc: "Highlight birthday cards for today's birthdays",
   settingsLanguage: "Language",
   settingsLanguageDesc: "Choose interface language",
+  settingsSourceSection: "Data source",
+  settingsDisplaySection: "Display",
+  settingsNotifySection: "Reminders",
+  settingsLunarProperty: "Lunar birthday property",
+  settingsLunarPropertyDesc: "Frontmatter property for lunar birthdays, format YYYY-MM-DD, leap month as 2023-02L-01. Leave empty to disable",
+  settingsLunarPropertyPlaceholder: "lunar_birthday",
+  settingsAliasProperty: "Alias property",
+  settingsAliasPropertyDesc: "Frontmatter property holding aliases; both name and alias are matched when searching. Accepts a YAML list or a comma-separated line. Leave empty to search names only",
+  settingsAliasPropertyPlaceholder: "aliases",
+  settingsNotifyEnabled: "Enable daily reminder",
+  settingsNotifyEnabledDesc: "Send a system notification summarizing today and upcoming birthdays",
+  settingsNotifyTime: "Reminder time",
+  settingsNotifyTimeDesc: "Check once a day after this time (24-hour)",
+  settingsNotifyTimePlaceholder: "09:00",
+  settingsReminderDays: "Remind ahead of time",
+  settingsReminderDaysDesc: "Extra days to remind in advance, comma separated. Today is always included",
+  settingsReminderDaysPlaceholder: "1,3,7",
+  notifyTitle: "Birthday Reminder",
+  notifyTodayLabel: "Today",
+  notifyDaysSuffix: "d away",
+  notifyMore: "and {count} more",
+  notifyNothing: "No birthdays to remind today",
+  commandShowPanel: "Show birthday panel",
+  commandCheckReminders: "Check today's birthday reminders",
+  ribbonTooltip: "Birthday Reminder",
   colorSchemeDefault: "Default",
   colorSchemeWarm: "Warm Orange",
   colorSchemeCool: "Cool Blue",
@@ -348,46 +418,36 @@ function getLocale(lang) {
   return locales[lang] || locales[defaultLanguage];
 }
 
-// settings.ts
+// src/settings.ts
 var _colorSchemes = {
   default: {
     name: "\u9ED8\u8BA4",
     primary: "var(--interactive-accent)",
-    secondary: "var(--background-primary-alt)",
     accent: "var(--text-accent)",
-    warning: "rgba(255, 100, 100, 0.3)",
     success: "rgba(100, 255, 100, 0.2)"
   },
   warm: {
     name: "\u6E29\u6696\u6A59",
     primary: "#ff9800",
-    secondary: "#fff3e0",
     accent: "#f57c00",
-    warning: "rgba(255, 152, 0, 0.2)",
     success: "rgba(76, 175, 80, 0.2)"
   },
   cool: {
     name: "\u6E05\u65B0\u84DD",
     primary: "#2196f3",
-    secondary: "#e3f2fd",
     accent: "#1976d2",
-    warning: "rgba(33, 150, 243, 0.2)",
     success: "rgba(76, 175, 80, 0.2)"
   },
   nature: {
     name: "\u81EA\u7136\u7EFF",
     primary: "#4caf50",
-    secondary: "#e8f5e9",
     accent: "#2e7d32",
-    warning: "rgba(76, 175, 80, 0.2)",
     success: "rgba(76, 175, 80, 0.2)"
   },
   purple: {
     name: "\u4F18\u96C5\u7D2B",
     primary: "#9c27b0",
-    secondary: "#f3e5f5",
     accent: "#7b1fa2",
-    warning: "rgba(156, 39, 176, 0.2)",
     success: "rgba(76, 175, 80, 0.2)"
   }
 };
@@ -401,10 +461,19 @@ var DEFAULT_SETTINGS = {
   enableCalendar: true,
   showStatistics: true,
   highlightToday: true,
-  reminderDays: [7, 30],
+  reminderDays: [1, 3, 7],
   language: "zh-cn",
-  birthdayProperty: "birthday"
+  birthdayProperty: "birthday",
+  lunarProperty: "lunar_birthday",
+  aliasProperty: "aliases",
+  notifyEnabled: false,
+  notifyTime: "09:00",
+  lastNotifiedDate: ""
 };
+function parseReminderDays(value) {
+  const days = value.split(/[,，\s]+/).map((part) => Number(part.trim())).filter((day) => Number.isInteger(day) && day >= 0 && day <= 365);
+  return Array.from(new Set(days)).sort((a, b) => a - b);
+}
 var BirthdayReminderSettingTab = class extends import_obsidian.PluginSettingTab {
   constructor(app, plugin) {
     super(app, plugin);
@@ -416,6 +485,7 @@ var BirthdayReminderSettingTab = class extends import_obsidian.PluginSettingTab 
     containerEl.empty();
     const settings = this.plugin.settings;
     const locale = this.getLocale();
+    new import_obsidian.Setting(containerEl).setName(locale.settingsSourceSection).setHeading();
     new import_obsidian.Setting(containerEl).setName(locale.settingsTargetPath).setDesc(locale.settingsTargetPathDesc).addText((text) => text.setPlaceholder(locale.settingsTargetPathPlaceholder).setValue(settings.targetPath).onChange(async (value) => {
       settings.targetPath = value;
       await this.plugin.saveSettings();
@@ -430,7 +500,42 @@ date_of_birth: 1990-05-20`).addText((text) => text.setPlaceholder(locale.setting
       settings.birthdayProperty = newValue || "birthday";
       await this.plugin.saveSettings();
     }));
-    new import_obsidian.Setting(containerEl).setName(locale.settingsVisibleMonths).setDesc(locale.settingsVisibleMonthsDesc).addSlider((slider) => slider.setLimits(1, 6, 1).setValue(settings.visibleMonths).setDynamicTooltip().onChange(async (value) => {
+    new import_obsidian.Setting(containerEl).setName(locale.settingsLunarProperty).setDesc(`${locale.settingsLunarPropertyDesc}
+
+lunar_birthday: 1990-04-26
+lunar_birthday: 2023-02L-01`).addText((text) => text.setPlaceholder(locale.settingsLunarPropertyPlaceholder).setValue(settings.lunarProperty).onChange(async (value) => {
+      settings.lunarProperty = value.trim();
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian.Setting(containerEl).setName(locale.settingsAliasProperty).setDesc(locale.settingsAliasPropertyDesc).addText((text) => text.setPlaceholder(locale.settingsAliasPropertyPlaceholder).setValue(settings.aliasProperty).onChange(async (value) => {
+      settings.aliasProperty = value.trim();
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian.Setting(containerEl).setName(locale.settingsNotifySection).setHeading();
+    new import_obsidian.Setting(containerEl).setName(locale.settingsNotifyEnabled).setDesc(locale.settingsNotifyEnabledDesc).addToggle((toggle) => toggle.setValue(settings.notifyEnabled).onChange(async (value) => {
+      settings.notifyEnabled = value;
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian.Setting(containerEl).setName(locale.settingsNotifyTime).setDesc(locale.settingsNotifyTimeDesc).addText((text) => text.setPlaceholder(locale.settingsNotifyTimePlaceholder).setValue(settings.notifyTime).onChange(async (value) => {
+      settings.notifyTime = value.trim() || "09:00";
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian.Setting(containerEl).setName(locale.settingsReminderDays).setDesc(locale.settingsReminderDaysDesc).addText((text) => text.setPlaceholder(locale.settingsReminderDaysPlaceholder).setValue(settings.reminderDays.join(",")).onChange(async (value) => {
+      settings.reminderDays = parseReminderDays(value);
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian.Setting(containerEl).setName(locale.settingsDisplaySection).setHeading();
+    new import_obsidian.Setting(containerEl).setName(locale.settingsLanguage).setDesc(locale.settingsLanguageDesc).addDropdown((dropdown) => {
+      dropdown.addOption("zh-cn", "\u4E2D\u6587");
+      dropdown.addOption("en-us", "English");
+      dropdown.setValue(settings.language);
+      dropdown.onChange(async (value) => {
+        settings.language = value;
+        await this.plugin.saveSettings();
+        this.display();
+      });
+    });
+    new import_obsidian.Setting(containerEl).setName(locale.settingsVisibleMonths).setDesc(locale.settingsVisibleMonthsDesc).addSlider((slider) => slider.setLimits(1, 6, 1).setValue(settings.visibleMonths).onChange(async (value) => {
       settings.visibleMonths = value;
       await this.plugin.saveSettings();
     }));
@@ -452,37 +557,19 @@ date_of_birth: 1990-05-20`).addText((text) => text.setPlaceholder(locale.setting
     const previewSetting = new import_obsidian.Setting(containerEl).setName(locale.colorPreview).setDesc("");
     const previewEl = previewSetting.controlEl.createDiv({ cls: "birthday-color-preview-box" });
     const row1 = previewEl.createDiv({ cls: "birthday-color-preview-row" });
-    const primarySpan = row1.createSpan({ cls: "birthday-color-preview-primary", text: "Primary" });
-    const secondarySpan = row1.createSpan({ cls: "birthday-color-preview-secondary", text: "Secondary" });
-    const accentSpan = row1.createSpan({ cls: "birthday-color-preview-accent", text: "Accent" });
-    const warningDiv = previewEl.createDiv({ cls: "birthday-color-preview-warning", text: "Warning" });
-    const successDiv = previewEl.createDiv({ cls: "birthday-color-preview-success", text: "Success" });
+    row1.createSpan({ cls: "birthday-color-preview-primary", text: "Primary" });
+    row1.createSpan({ cls: "birthday-color-preview-accent", text: "Accent" });
+    previewEl.createDiv({ cls: "birthday-color-preview-success", text: "Success" });
     const updateColorPreview = () => {
       const scheme = COLOR_SCHEMES[settings.colorScheme];
-      if (scheme) {
-        primarySpan.style.color = scheme.primary;
-        primarySpan.style.backgroundColor = scheme.primary;
-        secondarySpan.style.color = scheme.secondary;
-        secondarySpan.style.backgroundColor = scheme.secondary;
-        accentSpan.style.color = scheme.accent;
-        accentSpan.style.backgroundColor = scheme.accent;
-        warningDiv.style.color = scheme.warning;
-        warningDiv.style.backgroundColor = scheme.warning;
-        successDiv.style.color = scheme.success;
-        successDiv.style.backgroundColor = scheme.success;
-      }
+      if (!scheme)
+        return;
+      previewEl.toggleClass("is-custom", settings.colorScheme !== "default");
+      previewEl.style.setProperty("--preview-primary-base", scheme.primary);
+      previewEl.style.setProperty("--preview-accent-base", scheme.accent);
+      previewEl.style.setProperty("--preview-success", scheme.success);
     };
     updateColorPreview();
-    new import_obsidian.Setting(containerEl).setName(locale.settingsLanguage).setDesc(locale.settingsLanguageDesc).addDropdown((dropdown) => {
-      dropdown.addOption("zh-cn", "\u4E2D\u6587");
-      dropdown.addOption("en-us", "English");
-      dropdown.setValue(settings.language);
-      dropdown.onChange(async (value) => {
-        settings.language = value;
-        await this.plugin.saveSettings();
-        this.display();
-      });
-    });
     const toggles = [
       { key: "enableLunar", name: locale.settingsEnableLunar, desc: locale.settingsEnableLunarDesc },
       { key: "enableZodiac", name: locale.settingsEnableZodiac, desc: locale.settingsEnableZodiacDesc },
@@ -496,9 +583,6 @@ date_of_birth: 1990-05-20`).addText((text) => text.setPlaceholder(locale.setting
         await this.plugin.saveSettings();
       }));
     }
-  }
-  getSettingDefinitions() {
-    return [];
   }
   getLocale() {
     return getLocale(this.plugin.settings.language);
@@ -516,7 +600,114 @@ date_of_birth: 1990-05-20`).addText((text) => text.setPlaceholder(locale.setting
   }
 };
 
-// lunar.ts
+// src/utils.ts
+function isRecord(value) {
+  return typeof value === "object" && value !== null;
+}
+var DATE_ONLY_RE = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/;
+function daysInMonth(year, month) {
+  return new Date(Date.UTC(year, month, 0)).getUTCDate();
+}
+function makeDateOnly(year, month, day) {
+  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day))
+    return null;
+  if (month < 1 || month > 12)
+    return null;
+  if (day < 1 || day > daysInMonth(year, month))
+    return null;
+  return { year, month, day };
+}
+function parseDateOnly(value) {
+  if (value instanceof Date) {
+    if (Number.isNaN(value.getTime()))
+      return null;
+    return makeDateOnly(value.getFullYear(), value.getMonth() + 1, value.getDate());
+  }
+  if (typeof value === "number") {
+    const fromNumber = new Date(value);
+    if (Number.isNaN(fromNumber.getTime()))
+      return null;
+    return makeDateOnly(fromNumber.getFullYear(), fromNumber.getMonth() + 1, fromNumber.getDate());
+  }
+  if (typeof value !== "string")
+    return null;
+  const text = value.trim();
+  if (!text)
+    return null;
+  const matched = DATE_ONLY_RE.exec(text);
+  if (matched) {
+    return makeDateOnly(Number(matched[1]), Number(matched[2]), Number(matched[3]));
+  }
+  const parsed = new Date(text);
+  if (Number.isNaN(parsed.getTime()))
+    return null;
+  return makeDateOnly(parsed.getFullYear(), parsed.getMonth() + 1, parsed.getDate());
+}
+function toDateKey(date) {
+  const month = String(date.month).padStart(2, "0");
+  const day = String(date.day).padStart(2, "0");
+  return `${date.year}-${month}-${day}`;
+}
+function birthdaySignature(value) {
+  const parsed = parseDateOnly(value);
+  return parsed ? toDateKey(parsed) : "";
+}
+var LUNAR_RE = /^(\d{4})[-/.](\d{1,2})([Ll]?)[-/.](\d{1,2})$/;
+function parseLunarDate(value) {
+  if (typeof value !== "string")
+    return null;
+  const matched = LUNAR_RE.exec(value.trim());
+  if (!matched)
+    return null;
+  const year = Number(matched[1]);
+  const month = Number(matched[2]);
+  const day = Number(matched[4]);
+  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day))
+    return null;
+  if (month < 1 || month > 12)
+    return null;
+  if (day < 1 || day > 30)
+    return null;
+  return { year, month, day, isLeap: matched[3] !== "" };
+}
+function lunarKey(value) {
+  const month = String(value.month).padStart(2, "0");
+  const day = String(value.day).padStart(2, "0");
+  return `${value.year}-${month}${value.isLeap ? "L" : ""}-${day}`;
+}
+function toLocalDate(date) {
+  return new Date(date.year, date.month - 1, date.day, 12, 0, 0, 0);
+}
+function todayDateOnly() {
+  const now = new Date();
+  return { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() };
+}
+function dayOrdinal(date) {
+  return Math.round(Date.UTC(date.year, date.month - 1, date.day) / 864e5);
+}
+function diffInDays(from, to) {
+  return dayOrdinal(to) - dayOrdinal(from);
+}
+function isLeapYear(year) {
+  return daysInMonth(year, 2) === 29;
+}
+function birthdayInYear(birth, year) {
+  if (birth.month === 2 && birth.day === 29 && !isLeapYear(year)) {
+    return { year, month: 3, day: 1 };
+  }
+  const safeDay = Math.min(birth.day, daysInMonth(year, birth.month));
+  return { year, month: birth.month, day: safeDay };
+}
+function nextBirthday(birth, today) {
+  const thisYear = birthdayInYear(birth, today.year);
+  if (diffInDays(today, thisYear) >= 0) {
+    return { date: thisYear, daysRemaining: diffInDays(today, thisYear), age: today.year - birth.year };
+  }
+  const nextYear = birthdayInYear(birth, today.year + 1);
+  return { date: nextYear, daysRemaining: diffInDays(today, nextYear), age: today.year + 1 - birth.year };
+}
+
+// src/lunar.ts
 var import_solarlunar = __toESM(require_solarlunar_min());
 var MONTH_NAMES_CN = ["\u6B63", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D", "\u4E03", "\u516B", "\u4E5D", "\u5341", "\u51AC", "\u814A"];
 var DAY_NAMES_CN = [
@@ -679,17 +870,179 @@ function getGanZhi(year) {
   const zhiIndex = (offset % 12 + 12) % 12;
   return gan[ganIndex] + zhi[zhiIndex];
 }
-
-// view.ts
-var VIEW_TYPE = "birthday-reminder-view";
-function isRecord(value) {
-  return typeof value === "object" && value !== null;
+function lunarToSolar(input) {
+  const convert = (isLeap) => {
+    try {
+      const result = import_solarlunar.default.lunar2solar(input.year, input.month, input.day, isLeap);
+      if (typeof result !== "object" || result === null)
+        return null;
+      return { year: result.cYear, month: result.cMonth, day: result.cDay };
+    } catch (error) {
+      console.warn("Lunar to solar conversion failed:", error);
+      return null;
+    }
+  };
+  const exact = convert(input.isLeap);
+  if (exact)
+    return exact;
+  return input.isLeap ? convert(false) : null;
 }
+function formatLunarMonthDay(month, day, isLeap, language = "zh-cn") {
+  var _a, _b, _c;
+  const isEnglish = language === "en-us";
+  if (isEnglish) {
+    const monthName2 = (_a = MONTH_NAMES_EN[month - 1]) != null ? _a : String(month);
+    return `${isLeap ? "Leap " : ""}${monthName2} ${getDayNameEn(day)}`;
+  }
+  const monthName = (_b = MONTH_NAMES_CN[month - 1]) != null ? _b : String(month);
+  const dayName = (_c = DAY_NAMES_CN[day - 1]) != null ? _c : String(day);
+  const text = `${monthName}\u6708${dayName}`;
+  return isLeap ? `\u95F0${text}` : text;
+}
+function nextLunarOccurrence(birth, today) {
+  const todayLunar = solarToLunar(toLocalDate(today));
+  const startYear = todayLunar ? todayLunar.year : today.year;
+  for (let year = startYear; year <= startYear + 1; year++) {
+    const solar = lunarToSolar({ ...birth, year });
+    if (!solar)
+      continue;
+    const daysRemaining = diffInDays(today, solar);
+    if (daysRemaining >= 0) {
+      return { date: solar, daysRemaining, age: year - birth.year };
+    }
+  }
+  return null;
+}
+
+// src/birthdays.ts
+function parseAliases(value) {
+  if (value === null || value === void 0)
+    return [];
+  const raw = Array.isArray(value) ? value : [value];
+  const out = [];
+  for (const entry of raw) {
+    if (typeof entry !== "string")
+      continue;
+    for (const part of entry.split(/[,，、;；]+/)) {
+      const alias = part.trim();
+      if (alias)
+        out.push(alias);
+    }
+  }
+  return Array.from(new Set(out));
+}
+function birthdaySignatureFor(frontmatter, settings) {
+  const solarRaw = frontmatter ? frontmatter[settings.birthdayProperty] : void 0;
+  const lunarRaw = settings.lunarProperty && frontmatter ? frontmatter[settings.lunarProperty] : void 0;
+  const aliasRaw = settings.aliasProperty && frontmatter ? frontmatter[settings.aliasProperty] : void 0;
+  const lunarParsed = parseLunarDate(lunarRaw);
+  const aliases = parseAliases(aliasRaw).join(",");
+  return `${birthdaySignature(solarRaw)}|${lunarParsed ? lunarKey(lunarParsed) : ""}|${aliases}`;
+}
+function makeSolarItem(file, birth, today, settings, aliases) {
+  const language = settings.language;
+  const next = nextBirthday(birth, today);
+  let lunarInfo = null;
+  if (settings.enableLunar) {
+    const lunar = solarToLunar(toLocalDate(birth), language);
+    if (lunar)
+      lunarInfo = formatLunarMonthDay(lunar.month, lunar.day, lunar.isLeap, language);
+  }
+  return {
+    name: file.name.replace(/\.md$/, ""),
+    path: file.path,
+    calendar: "solar",
+    birthday: toDateKey(birth),
+    nextBirthday: toDateKey(next.date),
+    daysRemaining: next.daysRemaining,
+    age: next.age,
+    lunarInfo,
+    animal: settings.enableZodiac ? getAnimal(birth.year, language) : null,
+    zodiac: settings.enableZodiac ? getZodiac(birth.month, birth.day, language) : null,
+    ganZhi: settings.enableZodiac ? getGanZhi(birth.year) : null,
+    isToday: next.daysRemaining === 0,
+    monthDay: `${next.date.month}-${next.date.day}`,
+    birthMonth: next.date.month - 1,
+    birthDay: next.date.day,
+    aliases
+  };
+}
+function makeLunarItem(file, birth, today, settings, aliases) {
+  const language = settings.language;
+  const next = nextLunarOccurrence(birth, today);
+  if (!next)
+    return null;
+  const birthSolar = lunarToSolar(birth);
+  return {
+    name: file.name.replace(/\.md$/, ""),
+    path: file.path,
+    calendar: "lunar",
+    birthday: toDateKey({ year: birth.year, month: birth.month, day: birth.day }),
+    nextBirthday: toDateKey(next.date),
+    daysRemaining: next.daysRemaining,
+    age: next.age,
+    // 农历生日本身就是农历日期，即使关闭「显示农历」也保留可读写法
+    lunarInfo: formatLunarMonthDay(birth.month, birth.day, birth.isLeap, language),
+    animal: settings.enableZodiac ? getAnimal(birth.year, language) : null,
+    zodiac: settings.enableZodiac && birthSolar ? getZodiac(birthSolar.month, birthSolar.day, language) : null,
+    ganZhi: settings.enableZodiac ? getGanZhi(birth.year) : null,
+    isToday: next.daysRemaining === 0,
+    monthDay: `${next.date.month}-${next.date.day}`,
+    birthMonth: next.date.month - 1,
+    birthDay: next.date.day,
+    aliases
+  };
+}
+function collectBirthdays(app, settings, snapshots) {
+  const items = [];
+  const today = todayDateOnly();
+  const lunarProperty = settings.lunarProperty;
+  for (const file of app.vault.getMarkdownFiles()) {
+    const cache = app.metadataCache.getFileCache(file);
+    const frontmatterRaw = cache == null ? void 0 : cache.frontmatter;
+    const frontmatter = isRecord(frontmatterRaw) ? frontmatterRaw : null;
+    if (snapshots)
+      snapshots.set(file.path, birthdaySignatureFor(frontmatter, settings));
+    if (!frontmatter)
+      continue;
+    if (settings.targetPath && !file.path.startsWith(settings.targetPath))
+      continue;
+    const solarBirth = parseDateOnly(frontmatter[settings.birthdayProperty]);
+    if (solarBirth) {
+      const aliases = settings.aliasProperty ? parseAliases(frontmatter[settings.aliasProperty]) : [];
+      items.push(makeSolarItem(file, solarBirth, today, settings, aliases));
+      continue;
+    }
+    if (!lunarProperty)
+      continue;
+    const lunarBirth = parseLunarDate(frontmatter[lunarProperty]);
+    if (!lunarBirth)
+      continue;
+    const lunarAliases = settings.aliasProperty ? parseAliases(frontmatter[settings.aliasProperty]) : [];
+    const item = makeLunarItem(file, lunarBirth, today, settings, lunarAliases);
+    if (item)
+      items.push(item);
+  }
+  items.sort((a, b) => a.daysRemaining - b.daysRemaining);
+  return items;
+}
+
+// src/view.ts
+var VIEW_TYPE = "birthday-reminder-view";
+var LATER_LIMIT = 20;
 var BirthdayReminderView = class extends import_obsidian2.ItemView {
   constructor(leaf, plugin) {
     super(leaf);
+    this.refreshInterval = 0;
     this.currentMonthOffset = 0;
     this.resizeObserver = null;
+    this.listEl = null;
+    this.items = [];
+    this.searchQuery = "";
+    this.sortMode = "days";
+    this.expandedLater = false;
+    /** 本次搜索里「靠别名才命中」的条目：path → 命中的别名 */
+    this.aliasHits = /* @__PURE__ */ new Map();
     this.plugin = plugin;
   }
   get settings() {
@@ -744,135 +1097,170 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
   getModeClass() {
     return this.isSidebarMode() ? "birthday-sidebar-mode" : "birthday-full-mode";
   }
-  // 更新布局模式
+  // 更新布局模式：只有「侧栏 ↔ 全窗」真正切换时才重渲染，拖分隔条不再连续重建
   async updateLayoutMode() {
+    const nextMode = this.getModeClass();
+    if (this.container.hasClass(nextMode))
+      return;
     this.container.removeClass("birthday-sidebar-mode");
     this.container.removeClass("birthday-full-mode");
-    this.container.addClass(this.getModeClass());
+    this.container.addClass(nextMode);
     await this.render();
   }
   async render() {
     this.container.empty();
     this.container.addClass("birthday-reminder-view");
     this.container.addClass(this.getModeClass());
+    this.applyColorScheme();
     const settings = this.settings;
-    const scheme = COLOR_SCHEMES[settings.colorScheme];
     const locale = this.getLocale();
-    const birthdayProp = settings.birthdayProperty;
-    const currentLanguage = settings.language;
-    const isEnglish = currentLanguage === "en-us";
-    this.container.style.setProperty("--birthday-primary", scheme.primary);
-    this.container.style.setProperty("--birthday-secondary", scheme.secondary);
-    this.container.style.setProperty("--birthday-accent", scheme.accent);
-    this.container.style.setProperty("--birthday-warning", scheme.warning);
-    this.container.style.setProperty("--birthday-success", scheme.success);
-    const files = this.app.vault.getMarkdownFiles();
-    const birthdayData = [];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    for (const file of files) {
-      const cache = this.app.metadataCache.getFileCache(file);
-      if (!cache)
-        continue;
-      const frontmatterRaw = cache.frontmatter;
-      if (!isRecord(frontmatterRaw))
-        continue;
-      const frontmatter = frontmatterRaw;
-      const birthday = frontmatter[birthdayProp];
-      let birthDate = null;
-      if (typeof birthday === "string") {
-        birthDate = new Date(birthday);
-      } else if (birthday instanceof Date) {
-        birthDate = birthday;
-      } else {
-        continue;
-      }
-      if (isNaN(birthDate.getTime()))
-        continue;
-      if (settings.targetPath && !file.path.startsWith(settings.targetPath))
-        continue;
-      const currentYear = today.getFullYear();
-      const birthMonth = birthDate.getMonth();
-      const birthDay = birthDate.getDate();
-      let nextBirthday = new Date(currentYear, birthMonth, birthDay);
-      let nextBirthdayYear = currentYear;
-      if (nextBirthday < today) {
-        nextBirthdayYear = currentYear + 1;
-        nextBirthday = new Date(nextBirthdayYear, birthMonth, birthDay);
-      }
-      const daysRemaining = Math.ceil((nextBirthday.getTime() - today.getTime()) / 864e5);
-      const age = nextBirthdayYear - birthDate.getFullYear();
-      let lunarInfo = null;
-      if (settings.enableLunar) {
-        const lunar = solarToLunar(birthDate, currentLanguage);
-        if (lunar) {
-          if (isEnglish) {
-            lunarInfo = `${lunar.monthName} ${lunar.dayName}`;
-          } else {
-            lunarInfo = `${lunar.monthName}\u6708${lunar.dayName}`;
-            if (lunar.isLeap)
-              lunarInfo = `\u95F0${lunarInfo}`;
-          }
-        }
-      }
-      let animal = null;
-      let zodiac = null;
-      let ganZhi = null;
-      if (settings.enableZodiac) {
-        animal = getAnimal(birthDate.getFullYear(), currentLanguage);
-        zodiac = getZodiac(birthDate.getMonth() + 1, birthDate.getDate(), currentLanguage);
-        ganZhi = getGanZhi(birthDate.getFullYear());
-      }
-      birthdayData.push({
-        name: file.name.replace(/\.md$/, ""),
-        path: file.path,
-        birthday: birthDate.toISOString().split("T")[0],
-        nextBirthday: `${nextBirthday.getFullYear()}-${String(nextBirthday.getMonth() + 1).padStart(2, "0")}-${String(nextBirthday.getDate()).padStart(2, "0")}`,
-        daysRemaining,
-        age,
-        lunarInfo,
-        animal,
-        zodiac,
-        ganZhi,
-        isToday: daysRemaining === 0,
-        monthDay: `${birthDate.getMonth() + 1}-${birthDate.getDate()}`,
-        birthMonth: birthDate.getMonth(),
-        birthDay: birthDate.getDate()
-      });
-    }
-    birthdayData.sort((a, b) => a.daysRemaining - b.daysRemaining);
-    const todayBirthdays = birthdayData.filter((b) => b.isToday);
-    const upcomingWeek = birthdayData.filter((b) => b.daysRemaining > 0 && b.daysRemaining <= 7);
-    const upcomingMonth = birthdayData.filter((b) => b.daysRemaining > 7 && b.daysRemaining <= 30);
-    const later = birthdayData.filter((b) => b.daysRemaining > 30);
+    this.items = collectBirthdays(this.app, settings, this.plugin.birthdaySnapshots);
     if (settings.showStatistics) {
-      this.renderStatistics(todayBirthdays.length, upcomingWeek.length, upcomingMonth.length, birthdayData.length);
+      const todayCount = this.items.filter((item) => item.daysRemaining === 0).length;
+      const weekCount = this.items.filter((item) => item.daysRemaining > 0 && item.daysRemaining <= 7).length;
+      const monthCount = this.items.filter((item) => item.daysRemaining > 7 && item.daysRemaining <= 30).length;
+      this.renderStatistics(todayCount, weekCount, monthCount, this.items.length);
     }
-    if (todayBirthdays.length > 0) {
-      this.renderSection("today", todayBirthdays, true);
-    }
-    if (upcomingWeek.length > 0) {
-      this.renderSection("week", upcomingWeek, true);
-    }
-    if (upcomingMonth.length > 0) {
-      this.renderSection("month", upcomingMonth, true);
-    }
-    if (later.length > 0) {
-      this.renderSection("later", later.slice(0, 20), true);
-    }
+    this.renderControls(locale);
+    this.listEl = this.container.createDiv({ cls: "birthday-list" });
+    this.renderList();
     if (settings.enableCalendar) {
-      this.renderCalendar(birthdayData, settings.visibleMonths);
+      this.renderCalendar(this.items, settings.visibleMonths);
     }
-    if (birthdayData.length === 0) {
-      const emptyEl = this.container.createDiv({ cls: "birthday-empty" });
-      let message = "";
-      if (settings.targetPath) {
-        message = locale.emptyMessageWithPropertyAndPath.replace("{path}", settings.targetPath).replace("{property}", birthdayProp);
-      } else {
-        message = locale.emptyMessageWithProperty.replace("{property}", birthdayProp);
+    if (this.items.length === 0) {
+      this.renderEmptyState(locale, settings);
+    }
+  }
+  /** 应用配色变量；非默认配色在暗色主题下由 CSS 提亮 */
+  applyColorScheme() {
+    var _a;
+    const settings = this.settings;
+    const scheme = (_a = COLOR_SCHEMES[settings.colorScheme]) != null ? _a : COLOR_SCHEMES.default;
+    this.container.style.setProperty("--birthday-primary-base", scheme.primary);
+    this.container.style.setProperty("--birthday-accent-base", scheme.accent);
+    this.container.style.setProperty("--birthday-success", scheme.success);
+    this.container.toggleClass("birthday-scheme-custom", settings.colorScheme !== "default");
+  }
+  renderControls(locale) {
+    const isSidebar = this.isSidebarMode();
+    const controls = this.container.createDiv({ cls: "birthday-controls" });
+    if (isSidebar)
+      controls.addClass("birthday-controls-compact");
+    const searchWrap = controls.createDiv({ cls: "birthday-search-wrap" });
+    const search = searchWrap.createEl("input", { cls: "birthday-search" });
+    search.type = "text";
+    search.placeholder = locale.searchPlaceholder;
+    search.value = this.searchQuery;
+    const clear = searchWrap.createEl("button", {
+      cls: "birthday-search-clear",
+      attr: { type: "button", "aria-label": locale.clearSearch, title: locale.clearSearch }
+    });
+    clear.setText("\xD7");
+    const syncClear = () => {
+      clear.toggleClass("is-visible", this.searchQuery.length > 0);
+    };
+    syncClear();
+    search.addEventListener("input", () => {
+      this.searchQuery = search.value;
+      syncClear();
+      this.renderList();
+    });
+    clear.addEventListener("click", () => {
+      this.searchQuery = "";
+      search.value = "";
+      syncClear();
+      this.renderList();
+      search.focus();
+    });
+    const sort = controls.createEl("select", { cls: "birthday-sort" });
+    const options = [
+      ["days", locale.sortByDays],
+      ["name", locale.sortByName],
+      ["age", locale.sortByAge]
+    ];
+    for (const [value, label] of options) {
+      const option = sort.createEl("option", { text: label });
+      option.value = value;
+    }
+    sort.value = this.sortMode;
+    sort.addEventListener("change", () => {
+      this.sortMode = sort.value;
+      this.renderList();
+    });
+  }
+  /** 姓名或任一别名包含关键词即命中；靠别名命中的记进 aliasHits 供列表标注 */
+  matchesQuery(item, query) {
+    if (item.name.toLowerCase().includes(query))
+      return true;
+    for (const alias of item.aliases) {
+      if (alias.toLowerCase().includes(query)) {
+        this.aliasHits.set(item.path, alias);
+        return true;
       }
-      emptyEl.setText(message);
     }
+    return false;
+  }
+  sortItems(items) {
+    const sorted = [...items];
+    if (this.sortMode === "name") {
+      sorted.sort((a, b) => a.name.localeCompare(b.name, this.settings.language));
+    } else if (this.sortMode === "age") {
+      sorted.sort((a, b) => b.age - a.age || a.daysRemaining - b.daysRemaining);
+    } else {
+      sorted.sort((a, b) => a.daysRemaining - b.daysRemaining);
+    }
+    return sorted;
+  }
+  renderList() {
+    const listEl = this.listEl;
+    if (!listEl)
+      return;
+    listEl.empty();
+    const locale = this.getLocale();
+    const query = this.searchQuery.trim().toLowerCase();
+    this.aliasHits.clear();
+    const visible = query ? this.items.filter((item) => this.matchesQuery(item, query)) : this.items;
+    if (visible.length === 0) {
+      if (query)
+        listEl.createDiv({ cls: "birthday-empty", text: locale.noMatch });
+      return;
+    }
+    const sorted = this.sortItems(visible);
+    const todayBirthdays = sorted.filter((item) => item.daysRemaining === 0);
+    const upcomingWeek = sorted.filter((item) => item.daysRemaining > 0 && item.daysRemaining <= 7);
+    const upcomingMonth = sorted.filter((item) => item.daysRemaining > 7 && item.daysRemaining <= 30);
+    const later = sorted.filter((item) => item.daysRemaining > 30);
+    if (todayBirthdays.length > 0)
+      this.renderSection(listEl, "today", todayBirthdays);
+    if (upcomingWeek.length > 0)
+      this.renderSection(listEl, "week", upcomingWeek);
+    if (upcomingMonth.length > 0)
+      this.renderSection(listEl, "month", upcomingMonth);
+    if (later.length > 0) {
+      const shown = this.expandedLater ? later : later.slice(0, LATER_LIMIT);
+      this.renderSection(listEl, "later", shown);
+      if (later.length > LATER_LIMIT)
+        this.renderLaterToggle(listEl, later.length);
+    }
+  }
+  renderLaterToggle(parent, total) {
+    const locale = this.getLocale();
+    const label = this.expandedLater ? locale.collapseLater : locale.showAllLater.replace("{count}", String(total));
+    const button = parent.createEl("button", { cls: "birthday-more-button", text: label });
+    button.addEventListener("click", () => {
+      this.expandedLater = !this.expandedLater;
+      this.renderList();
+    });
+  }
+  renderEmptyState(locale, settings) {
+    const emptyEl = this.container.createDiv({ cls: "birthday-empty" });
+    let message = "";
+    if (settings.targetPath) {
+      message = locale.emptyMessageWithPropertyAndPath.replace("{path}", settings.targetPath).replace("{property}", settings.birthdayProperty);
+    } else {
+      message = locale.emptyMessageWithProperty.replace("{property}", settings.birthdayProperty);
+    }
+    emptyEl.setText(message);
   }
   renderStatistics(today, week, month, total) {
     const locale = this.getLocale();
@@ -901,9 +1289,9 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
       labelSpan.setText(stat.label);
     }
   }
-  renderSection(sectionKey, items, showExtra) {
+  renderSection(parent, sectionKey, items) {
     const locale = this.getLocale();
-    const section = this.container.createDiv({ cls: "birthday-section" });
+    const section = parent.createDiv({ cls: "birthday-section" });
     const isSidebar = this.isSidebarMode();
     const isEnglish = this.settings.language === "en-us";
     let titleText = "";
@@ -940,6 +1328,9 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
       } else if (item.daysRemaining <= 7) {
         itemEl.addClass("birthday-item-warning");
       }
+      if (item.calendar === "lunar") {
+        itemEl.addClass("birthday-item-lunar");
+      }
       itemEl.addEventListener("click", () => {
         void this.app.workspace.openLinkText(item.path, "", false);
       });
@@ -951,12 +1342,22 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
       }
       const nameDiv = content.createDiv({ cls: "birthday-name" });
       nameDiv.createSpan({ text: item.name });
+      if (item.calendar === "lunar") {
+        nameDiv.createSpan({ cls: "birthday-badge", text: locale.lunarPrefix });
+      }
+      const aliasHit = this.aliasHits.get(item.path);
+      if (aliasHit) {
+        nameDiv.createSpan({
+          cls: "birthday-badge birthday-badge-alias",
+          text: locale.aliasHint.replace("{alias}", aliasHit)
+        });
+      }
       if (isSidebar) {
         nameDiv.addClass("birthday-name-compact");
       } else {
         nameDiv.addClass("birthday-name-full");
       }
-      if (showExtra && (item.animal || item.zodiac || item.lunarInfo)) {
+      if (item.animal || item.zodiac || item.lunarInfo) {
         const infoDiv = nameDiv.createDiv({ cls: "birthday-info" });
         const infoParts = [];
         if (item.animal)
@@ -964,27 +1365,24 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
         if (item.zodiac)
           infoParts.push(item.zodiac);
         if (item.lunarInfo) {
-          if (isEnglish) {
-            infoParts.push(`${locale.lunarPrefix} ${item.lunarInfo}`);
-          } else {
-            infoParts.push(`${locale.lunarPrefix}${item.lunarInfo}`);
-          }
+          infoParts.push(isEnglish ? `${locale.lunarPrefix} ${item.lunarInfo}` : `${locale.lunarPrefix}${item.lunarInfo}`);
         }
         infoDiv.setText(infoParts.join(" \xB7 "));
       }
+      const birthdayText = item.calendar === "lunar" ? `${locale.lunarPrefix} ${item.birthday}` : item.birthday;
+      const ageText = isEnglish ? `${item.age} ${locale.ageUnitEn}` : `${item.age}${locale.ageUnit}`;
       if (!isSidebar) {
-        content.createSpan({ cls: "birthday-date", text: `${locale.birthdayLabel}\uFF1A${item.birthday}` });
+        content.createSpan({ cls: "birthday-date", text: `${locale.birthdayLabel}\uFF1A${birthdayText}` });
         content.createSpan({ cls: "birthday-next", text: `${locale.nextBirthdayLabel}\uFF1A${item.nextBirthday}` });
         const daysSpan = content.createSpan({ cls: "birthday-days" });
         if (item.daysRemaining <= 7) {
           daysSpan.addClass("birthday-days-urgent");
         }
         daysSpan.setText(item.isToday ? locale.todayBirthday : `${item.daysRemaining}${locale.daysRemaining}`);
-        const ageText = isEnglish ? `${item.age} ${locale.ageUnitEn}` : `${item.age}${locale.ageUnit}`;
         content.createSpan({ cls: "birthday-age", text: ageText });
       } else {
         const dateRow = content.createDiv({ cls: "birthday-date-row" });
-        dateRow.createSpan({ cls: "birthday-date", text: `${locale.birthdayLabel}\uFF1A${item.birthday}` });
+        dateRow.createSpan({ cls: "birthday-date", text: `${locale.birthdayLabel}\uFF1A${birthdayText}` });
         dateRow.createSpan({ cls: "birthday-next", text: `${locale.nextBirthdayLabel}\uFF1A${item.nextBirthday}` });
         const daysAgeRow = content.createDiv({ cls: "birthday-days-age-row" });
         const daysSpan = daysAgeRow.createSpan({ cls: "birthday-days" });
@@ -992,7 +1390,6 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
           daysSpan.addClass("birthday-days-urgent");
         }
         daysSpan.setText(item.isToday ? locale.todayBirthday : `${item.daysRemaining}${locale.daysRemaining}`);
-        const ageText = isEnglish ? `${item.age} ${locale.ageUnitEn}` : `${item.age}${locale.ageUnit}`;
         daysAgeRow.createSpan({ cls: "birthday-age", text: ageText });
       }
     }
@@ -1033,10 +1430,13 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
         const targetDate = new Date(startDate.getFullYear(), startDate.getMonth() + m, 1);
         const year = targetDate.getFullYear();
         const month = targetDate.getMonth();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const daysInMonth2 = new Date(year, month + 1, 0).getDate();
         const firstDayOfWeek = new Date(year, month, 1).getDay();
         const monthEl = calendarEl.createDiv({ cls: "birthday-calendar-month" });
-        const monthTitle = monthEl.createEl("h3", { cls: "birthday-calendar-month-title", text: `${year}\u5E74${month + 1}\u6708` });
+        const monthTitle = monthEl.createEl("h3", {
+          cls: "birthday-calendar-month-title",
+          text: locale.monthTitlePattern.replace("{year}", String(year)).replace("{month}", String(month + 1))
+        });
         if (isSidebar) {
           monthTitle.addClass("birthday-calendar-month-title-compact");
         }
@@ -1079,7 +1479,7 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
             });
           }
         }
-        for (let d = 1; d <= daysInMonth; d++) {
+        for (let d = 1; d <= daysInMonth2; d++) {
           const monthDayKey = `${month + 1}-${d}`;
           const birthdays = monthDayMap.get(monthDayKey) || [];
           const isToday = today.getDate() === d && today.getMonth() === month && today.getFullYear() === year;
@@ -1112,7 +1512,7 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
             moreEl.title = birthdays.slice(maxShow).map((b) => b.name).join(", ");
           }
         }
-        const totalCells = firstDayOfWeek + daysInMonth;
+        const totalCells = firstDayOfWeek + daysInMonth2;
         const remainingCells = Math.ceil(totalCells / 7) * 7 - totalCells;
         if (remainingCells > 0) {
           const nextMonthDate = new Date(year, month + 1, 1);
@@ -1166,8 +1566,145 @@ var BirthdayReminderView = class extends import_obsidian2.ItemView {
   }
 };
 
-// main.ts
-var BirthdayReminderPlugin = class extends import_obsidian3.Plugin {
+// src/notifications.ts
+var import_obsidian3 = require("obsidian");
+var MAX_NAMES_PER_LINE = 3;
+function formatNames(items, locale, isEnglish) {
+  const shown = items.slice(0, MAX_NAMES_PER_LINE).map((item) => {
+    const age = isEnglish ? `${item.age} ${locale.ageUnitEn}` : `${item.age}${locale.ageUnit}`;
+    return isEnglish ? `${item.name} (${age})` : `${item.name}\uFF08${age}\uFF09`;
+  });
+  const rest = items.length - shown.length;
+  if (rest > 0) {
+    shown.push(locale.notifyMore.replace("{count}", String(rest)));
+  }
+  return shown.join(isEnglish ? ", " : "\u3001");
+}
+function buildReminderSummary(data, settings, locale) {
+  const isEnglish = settings.language === "en-us";
+  const separator = isEnglish ? ": " : "\uFF1A";
+  const todays = data.filter((item) => item.daysRemaining === 0);
+  const offsets = Array.from(new Set(settings.reminderDays)).filter((day) => day > 0).sort((a, b) => a - b);
+  const upcoming = data.filter((item) => offsets.includes(item.daysRemaining));
+  if (todays.length === 0 && upcoming.length === 0)
+    return null;
+  const lines = [];
+  if (todays.length > 0) {
+    lines.push(`${locale.notifyTodayLabel}${separator}${formatNames(todays, locale, isEnglish)}`);
+  }
+  for (const offset of offsets) {
+    const group = upcoming.filter((item) => item.daysRemaining === offset);
+    if (group.length === 0)
+      continue;
+    lines.push(`${offset}${locale.notifyDaysSuffix}${separator}${formatNames(group, locale, isEnglish)}`);
+  }
+  return { title: locale.notifyTitle, lines };
+}
+function parseTimeToMinutes(value) {
+  const matched = /^(\d{1,2}):(\d{2})$/.exec(value.trim());
+  if (!matched)
+    return 9 * 60;
+  const hours = Number(matched[1]);
+  const minutes = Number(matched[2]);
+  if (hours > 23 || minutes > 59)
+    return 9 * 60;
+  return hours * 60 + minutes;
+}
+function isTimeReached(value, now = new Date()) {
+  return now.getHours() * 60 + now.getMinutes() >= parseTimeToMinutes(value);
+}
+var ReminderService = class {
+  constructor(plugin) {
+    this.plugin = plugin;
+    this.timer = null;
+  }
+  start() {
+    this.stop();
+    this.timer = window.setInterval(() => this.check(false), 60 * 1e3);
+    this.plugin.registerInterval(this.timer);
+    this.check(false);
+  }
+  stop() {
+    if (this.timer !== null) {
+      window.clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+  /** force=true 时忽略开关、时间与当日去重（手动命令用） */
+  check(force) {
+    const settings = this.plugin.settings;
+    if (!force && !settings.notifyEnabled)
+      return;
+    const today = toDateKey(todayDateOnly());
+    if (!force && settings.lastNotifiedDate === today)
+      return;
+    if (!force && !isTimeReached(settings.notifyTime))
+      return;
+    const data = collectBirthdays(this.plugin.app, settings);
+    const locale = getLocale(settings.language);
+    const summary = buildReminderSummary(data, settings, locale);
+    console.debug("[birthday-reminder] reminder check", {
+      force,
+      records: data.length,
+      lines: summary ? summary.lines : null
+    });
+    if (!summary) {
+      if (force)
+        new import_obsidian3.Notice(locale.notifyNothing);
+      if (!force)
+        void this.markNotified(today);
+      return;
+    }
+    this.deliver(summary, force);
+    if (!force)
+      void this.markNotified(today);
+  }
+  async markNotified(today) {
+    if (this.plugin.settings.lastNotifiedDate === today)
+      return;
+    this.plugin.settings.lastNotifiedDate = today;
+    await this.plugin.saveSettings();
+  }
+  /** preferNotice=true 时跳过系统通知，直接弹应用内提示（手动命令用） */
+  deliver(summary, preferNotice = false) {
+    const body = summary.lines.join("\n");
+    if (!preferNotice && this.canUseSystemNotification()) {
+      try {
+        const notification = new Notification(summary.title, { body });
+        notification.onclick = () => {
+          window.focus();
+          void this.plugin.activateView();
+        };
+        return;
+      } catch (error) {
+        console.warn("Desktop notification failed, falling back to Notice:", error);
+      }
+    }
+    const notice = new import_obsidian3.Notice(`${summary.title}
+${body}`, 15e3);
+    notice.noticeEl.addEventListener("click", () => void this.plugin.activateView());
+  }
+  /**
+   * 系统通知是否可用：桌面端 + API 存在 + 没被用户拒绝。
+   * ⚠ macOS 的系统级开关（系统设置 → 通知）读不到，permission 通常恒为 granted，
+   * 那种情况下仍会静默不显示，需要用户自己在系统设置里放开。
+   */
+  canUseSystemNotification() {
+    if (!import_obsidian3.Platform.isDesktopApp)
+      return false;
+    if (typeof Notification !== "function")
+      return false;
+    return Notification.permission !== "denied";
+  }
+};
+
+// src/main.ts
+var BirthdayReminderPlugin = class extends import_obsidian4.Plugin {
+  constructor() {
+    super(...arguments);
+    /** 各文件上一次渲染时的生日属性签名，用于判断 frontmatter 是否真的变了 */
+    this.birthdaySnapshots = /* @__PURE__ */ new Map();
+  }
   async onload() {
     await this.loadSettings();
     this.registerView(
@@ -1176,46 +1713,51 @@ var BirthdayReminderPlugin = class extends import_obsidian3.Plugin {
         return new BirthdayReminderView(leaf, this);
       }
     );
-    this.addRibbonIcon("cake", "\u751F\u65E5\u63D0\u9192", () => {
+    const locale = getLocale(this.settings.language);
+    this.addRibbonIcon("cake", locale.ribbonTooltip, () => {
       void this.activateView();
     });
     this.addCommand({
       id: "show",
-      name: "\u663E\u793A\u751F\u65E5\u63D0\u9192\u9762\u677F",
+      name: locale.commandShowPanel,
       callback: () => void this.activateView()
+    });
+    this.addCommand({
+      id: "check-reminders",
+      name: locale.commandCheckReminders,
+      callback: () => this.reminder.check(true)
     });
     this.addSettingTab(new BirthdayReminderSettingTab(this.app, this));
     this.setupFileWatcher();
+    this.reminder = new ReminderService(this);
+    this.app.workspace.onLayoutReady(() => this.reminder.start());
   }
   setupFileWatcher() {
-    const vault = this.app.vault;
-    vault.on("create", (file) => {
-      if (file instanceof import_obsidian3.TFile && file.path.endsWith(".md")) {
+    const isMarkdown = (file) => file instanceof import_obsidian4.TFile && file.path.endsWith(".md");
+    const refreshOnFileChange = (file) => {
+      if (isMarkdown(file))
         this.refreshAllViews();
-      }
-    });
-    vault.on("delete", (file) => {
-      if (file instanceof import_obsidian3.TFile && file.path.endsWith(".md")) {
+    };
+    this.registerEvent(this.app.vault.on("create", refreshOnFileChange));
+    this.registerEvent(this.app.vault.on("delete", refreshOnFileChange));
+    this.registerEvent(this.app.vault.on("rename", refreshOnFileChange));
+    this.registerEvent(
+      this.app.metadataCache.on("changed", (file, _data, cache) => {
+        if (!isMarkdown(file))
+          return;
+        const frontmatter = isRecord(cache.frontmatter) ? cache.frontmatter : null;
+        const next = birthdaySignatureFor(frontmatter, this.settings);
+        if (this.birthdaySnapshots.get(file.path) === next)
+          return;
+        this.birthdaySnapshots.set(file.path, next);
         this.refreshAllViews();
-      }
-    });
-    vault.on("rename", (file) => {
-      if (file instanceof import_obsidian3.TFile && file.path.endsWith(".md")) {
-        this.refreshAllViews();
-      }
-    });
-    vault.on("modify", (file) => {
-      if (file instanceof import_obsidian3.TFile && file.path.endsWith(".md")) {
-        void window.setTimeout(() => this.refreshAllViews(), 100);
-      }
-    });
+      })
+    );
   }
   refreshAllViews() {
-    const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE);
-    if (leaves.length > 0) {
-      const view = leaves[0].view;
-      if (view) {
-        view.refresh();
+    for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE)) {
+      if (leaf.view instanceof BirthdayReminderView) {
+        leaf.view.refresh();
       }
     }
   }
@@ -1250,6 +1792,8 @@ var BirthdayReminderPlugin = class extends import_obsidian3.Plugin {
     this.refreshAllViews();
   }
   onunload() {
-    this.app.workspace.getLeavesOfType(VIEW_TYPE).forEach((leaf) => leaf.detach());
+    var _a;
+    (_a = this.reminder) == null ? void 0 : _a.stop();
+    this.app.workspace.detachLeavesOfType(VIEW_TYPE);
   }
 };

@@ -34,8 +34,23 @@ export interface LocaleMessages {
   ageUnit: string;
   ageUnitEn: string;
   
+  // 列表交互
+  searchPlaceholder: string;
+  sortByDays: string;
+  sortByName: string;
+  sortByAge: string;
+  noMatch: string;
+  /** 清空搜索按钮的无障碍标签 */
+  clearSearch: string;
+  /** 命中别名时的提示，支持 {alias} 占位符 */
+  aliasHint: string;
+  showAllLater: string;
+  collapseLater: string;
+
   // 日历
   calendarWeekdays: string[];
+  /** 月历标题模板，支持 {year} 与 {month} 占位符 */
+  monthTitlePattern: string;
   prevMonth: string;
   todayButton: string;
   nextMonth: string;
@@ -68,6 +83,43 @@ export interface LocaleMessages {
   settingsHighlightTodayDesc: string;
   settingsLanguage: string;
   settingsLanguageDesc: string;
+
+  // 设置分组标题
+  settingsSourceSection: string;
+  settingsDisplaySection: string;
+  settingsNotifySection: string;
+
+  // 农历生日
+  settingsLunarProperty: string;
+  settingsLunarPropertyDesc: string;
+  settingsLunarPropertyPlaceholder: string;
+
+  // 别名（搜索命中）
+  settingsAliasProperty: string;
+  settingsAliasPropertyDesc: string;
+  settingsAliasPropertyPlaceholder: string;
+
+  // 提醒
+  settingsNotifyEnabled: string;
+  settingsNotifyEnabledDesc: string;
+  settingsNotifyTime: string;
+  settingsNotifyTimeDesc: string;
+  settingsNotifyTimePlaceholder: string;
+  settingsReminderDays: string;
+  settingsReminderDaysDesc: string;
+  settingsReminderDaysPlaceholder: string;
+
+  // 提醒文案
+  notifyTitle: string;
+  notifyTodayLabel: string;
+  notifyDaysSuffix: string;
+  notifyMore: string;
+  notifyNothing: string;
+
+  // 命令与图标
+  commandShowPanel: string;
+  commandCheckReminders: string;
+  ribbonTooltip: string;
 
   // 配色方案名称
   colorSchemeDefault: string;
@@ -110,7 +162,18 @@ const zhCN: LocaleMessages = {
   ageUnit: '岁',
   ageUnitEn: 'years old',
   
+  searchPlaceholder: '搜索姓名或别名…',
+  sortByDays: '按剩余天数',
+  sortByName: '按姓名',
+  sortByAge: '按年龄',
+  noMatch: '没有匹配的人',
+  clearSearch: '清除搜索',
+  aliasHint: '别名：{alias}',
+  showAllLater: '显示全部（{count}）',
+  collapseLater: '收起',
+
   calendarWeekdays: ['日', '一', '二', '三', '四', '五', '六'],
+  monthTitlePattern: '{year}年{month}月',
   prevMonth: '◀ 上月',
   todayButton: '今天',
   nextMonth: '下月 ▶',
@@ -141,6 +204,37 @@ const zhCN: LocaleMessages = {
   settingsHighlightTodayDesc: '今日生日的卡片特殊高亮显示',
   settingsLanguage: '语言',
   settingsLanguageDesc: '选择界面语言',
+
+  settingsSourceSection: '数据源',
+  settingsDisplaySection: '显示',
+  settingsNotifySection: '提醒',
+
+  settingsLunarProperty: '农历生日属性',
+  settingsLunarPropertyDesc: '笔记中记录农历生日的属性名，格式 YYYY-MM-DD，闰月写成 2023-02L-01。留空则关闭农历生日',
+  settingsLunarPropertyPlaceholder: 'lunar_birthday',
+
+  settingsAliasProperty: '别名属性',
+  settingsAliasPropertyDesc: '笔记中记录别名的属性名，搜索时姓名和别名都会被匹配。支持 YAML 列表或逗号分隔的一行文本，留空则只按姓名搜索',
+  settingsAliasPropertyPlaceholder: 'aliases',
+
+  settingsNotifyEnabled: '启用每日提醒',
+  settingsNotifyEnabledDesc: '到点后发一条系统通知，汇总今天和即将到来的生日',
+  settingsNotifyTime: '提醒时间',
+  settingsNotifyTimeDesc: '每天在这个时间之后检查一次（24 小时制）',
+  settingsNotifyTimePlaceholder: '09:00',
+  settingsReminderDays: '提前提醒天数',
+  settingsReminderDaysDesc: '在生日前几天一起提醒，逗号分隔。当天生日始终提醒',
+  settingsReminderDaysPlaceholder: '1,3,7',
+
+  notifyTitle: '生日提醒',
+  notifyTodayLabel: '今天',
+  notifyDaysSuffix: '天后',
+  notifyMore: '等 {count} 人',
+  notifyNothing: '今天没有需要提醒的生日',
+
+  commandShowPanel: '显示生日提醒面板',
+  commandCheckReminders: '检查今日生日提醒',
+  ribbonTooltip: '生日提醒',
   
   colorSchemeDefault: '默认',
   colorSchemeWarm: '温暖橙',
@@ -180,7 +274,18 @@ const enUS: LocaleMessages = {
   ageUnit: 'years old',
   ageUnitEn: 'years old',
   
+  searchPlaceholder: 'Search name or alias…',
+  sortByDays: 'By days left',
+  sortByName: 'By name',
+  sortByAge: 'By age',
+  noMatch: 'No matching person',
+  clearSearch: 'Clear search',
+  aliasHint: 'Alias: {alias}',
+  showAllLater: 'Show all ({count})',
+  collapseLater: 'Collapse',
+
   calendarWeekdays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  monthTitlePattern: '{month}/{year}',
   prevMonth: '◀ Prev',
   todayButton: 'Today',
   nextMonth: 'Next ▶',
@@ -211,6 +316,37 @@ const enUS: LocaleMessages = {
   settingsHighlightTodayDesc: 'Highlight birthday cards for today\'s birthdays',
   settingsLanguage: 'Language',
   settingsLanguageDesc: 'Choose interface language',
+
+  settingsSourceSection: 'Data source',
+  settingsDisplaySection: 'Display',
+  settingsNotifySection: 'Reminders',
+
+  settingsLunarProperty: 'Lunar birthday property',
+  settingsLunarPropertyDesc: 'Frontmatter property for lunar birthdays, format YYYY-MM-DD, leap month as 2023-02L-01. Leave empty to disable',
+  settingsLunarPropertyPlaceholder: 'lunar_birthday',
+
+  settingsAliasProperty: 'Alias property',
+  settingsAliasPropertyDesc: 'Frontmatter property holding aliases; both name and alias are matched when searching. Accepts a YAML list or a comma-separated line. Leave empty to search names only',
+  settingsAliasPropertyPlaceholder: 'aliases',
+
+  settingsNotifyEnabled: 'Enable daily reminder',
+  settingsNotifyEnabledDesc: 'Send a system notification summarizing today and upcoming birthdays',
+  settingsNotifyTime: 'Reminder time',
+  settingsNotifyTimeDesc: 'Check once a day after this time (24-hour)',
+  settingsNotifyTimePlaceholder: '09:00',
+  settingsReminderDays: 'Remind ahead of time',
+  settingsReminderDaysDesc: 'Extra days to remind in advance, comma separated. Today is always included',
+  settingsReminderDaysPlaceholder: '1,3,7',
+
+  notifyTitle: 'Birthday Reminder',
+  notifyTodayLabel: 'Today',
+  notifyDaysSuffix: 'd away',
+  notifyMore: 'and {count} more',
+  notifyNothing: 'No birthdays to remind today',
+
+  commandShowPanel: 'Show birthday panel',
+  commandCheckReminders: "Check today's birthday reminders",
+  ribbonTooltip: 'Birthday Reminder',
   
   colorSchemeDefault: 'Default',
   colorSchemeWarm: 'Warm Orange',

@@ -466,43 +466,45 @@
   background: var(--background-primary);
   border-radius: 8px;
   border: 1px solid var(--background-modifier-border);
+  /* 预览变量：默认方案直接吃主题色，自定义方案与视图共用同一套压暗/提亮 */
+  --preview-primary: var(--interactive-accent);
+  --preview-accent: var(--text-accent);
+  --preview-success: var(--birthday-success, rgba(100, 255, 100, 0.2));
 }
 
+.birthday-color-preview-box.is-custom {
+  --preview-primary: color-mix(in srgb, var(--preview-primary-base) 82%, black);
+  --preview-accent: color-mix(in srgb, var(--preview-accent-base) 72%, black);
+}
+
+.theme-dark .birthday-color-preview-box.is-custom {
+  --preview-primary: color-mix(in srgb, var(--preview-primary-base) 72%, white);
+  --preview-accent: color-mix(in srgb, var(--preview-accent-base) 58%, white);
+}
+
+/* primary 在视图里只作边框色，预览也用边框呈现，避免「色块上白字」看不清 */
 .birthday-color-preview-primary {
   display: inline-block;
-  background: var(--interactive-accent);
-  color: white;
+  background: transparent;
+  border: 2px solid var(--preview-primary);
+  color: var(--text-normal);
   padding: 2px 8px;
   border-radius: 4px;
   margin-right: 8px;
 }
 
-.birthday-color-preview-secondary {
-  display: inline-block;
-  background: var(--background-primary-alt);
-  padding: 2px 8px;
-  border-radius: 4px;
-  margin-right: 8px;
-}
-
+/* accent 在视图里作文字色 */
 .birthday-color-preview-accent {
   display: inline-block;
-  color: var(--text-accent);
+  color: var(--preview-accent);
   font-weight: bold;
   margin-right: 12px;
 }
 
-.birthday-color-preview-warning {
-  display: block;
-  background: rgba(255, 100, 100, 0.3);
-  padding: 4px;
-  border-radius: 4px;
-  margin-top: 4px;
-}
-
+/* success 在视图里作背景色 */
 .birthday-color-preview-success {
   display: block;
-  background: rgba(100, 255, 100, 0.2);
+  background: var(--preview-success);
   padding: 4px;
   border-radius: 4px;
   margin-top: 4px;
@@ -647,3 +649,169 @@
   font-size: 10px;
 }
 
+
+/* ============================================ */
+/* 配色变量派生与暗色适配 */
+/* ============================================ */
+.birthday-reminder-view {
+  --birthday-primary: var(--birthday-primary-base, var(--interactive-accent));
+  --birthday-accent: var(--birthday-accent-base, var(--text-accent));
+}
+
+/*
+ * 非默认配色在亮色主题下压暗：accent 会作为文字色（徽标 / 剩余天数 / 日历日期），
+ * 原始硬编码色在白底上最低只有 2.70:1（温暖橙 #f57c00），达不到 AA 4.5:1。
+ * 82% / 72% 是按「四个方案全部达标」反推的比例：最差项 3.13:1（边框，阈值 3.0）
+ * 与 4.91:1（文字，阈值 4.5）。
+ */
+.birthday-reminder-view.birthday-scheme-custom {
+  --birthday-primary: color-mix(in srgb, var(--birthday-primary-base) 82%, black);
+  --birthday-accent: color-mix(in srgb, var(--birthday-accent-base) 72%, black);
+}
+
+/* 暗色主题反过来提亮，避免深绿/深紫在深底上读不清 */
+.theme-dark .birthday-reminder-view.birthday-scheme-custom {
+  --birthday-primary: color-mix(in srgb, var(--birthday-primary-base) 72%, white);
+  --birthday-accent: color-mix(in srgb, var(--birthday-accent-base) 58%, white);
+}
+
+/* ============================================ */
+/* 列表控制条：搜索与排序 */
+/* ============================================ */
+.birthday-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.birthday-controls-compact {
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+/* 搜索框 + 清除按钮：按钮绝对定位在输入框右侧内部 */
+.birthday-search-wrap {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.birthday-search {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 30px;
+  /* 右侧留出 × 的位置，长文本不会被按钮压住 */
+  padding: 0 26px 0 8px;
+  border-radius: 6px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-modifier-form-field);
+  color: var(--text-normal);
+  font-size: 13px;
+}
+
+.birthday-search:focus {
+  outline: none;
+  border-color: var(--birthday-accent);
+}
+
+.birthday-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  /* 无内容时不可见也不可点 */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease-in-out, background-color 0.12s ease-in-out;
+}
+
+.birthday-search-clear.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.birthday-search-clear:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.birthday-controls-compact .birthday-search-clear {
+  right: 3px;
+  width: 16px;
+  height: 16px;
+  font-size: 14px;
+}
+
+.birthday-sort {
+  flex: 0 0 auto;
+  height: 30px;
+  padding: 0 6px;
+  border-radius: 6px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-modifier-form-field);
+  color: var(--text-normal);
+  font-size: 13px;
+}
+
+.birthday-controls-compact .birthday-search,
+.birthday-controls-compact .birthday-sort {
+  height: 26px;
+  font-size: 12px;
+}
+
+/* ============================================ */
+/* 农历徽标与「显示全部」按钮 */
+/* ============================================ */
+.birthday-badge {
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: 4px;
+  border: 1px solid var(--birthday-accent);
+  color: var(--birthday-accent);
+  font-size: 10px;
+  line-height: 15px;
+  vertical-align: middle;
+  opacity: 0.9;
+}
+
+/* 靠别名命中时更弱一些，避免和农历徽标抢注意力 */
+.birthday-badge-alias {
+  border-style: dashed;
+  border-color: var(--text-faint);
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+.birthday-more-button {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px dashed var(--background-modifier-border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.birthday-more-button:hover {
+  color: var(--text-normal);
+  border-color: var(--birthday-accent);
+}

@@ -1,9 +1,16 @@
-import { Plugin, WorkspaceLeaf, TFile } from 'obsidian';
+import { Plugin, TAbstractFile, TFile, WorkspaceLeaf } from 'obsidian';
 import { BirthdayReminderView, VIEW_TYPE } from './view';
 import { BirthdayReminderSettings, DEFAULT_SETTINGS, BirthdayReminderSettingTab } from './settings';
+import { birthdaySignatureFor } from './birthdays';
+import { ReminderService } from './notifications';
+import { getLocale, Language } from './locales';
+import { isRecord } from './utils';
 
 export default class BirthdayReminderPlugin extends Plugin {
   settings!: BirthdayReminderSettings;
+  /** 各文件上一次渲染时的生日属性签名，用于判断 frontmatter 是否真的变了 */
+  birthdaySnapshots: Map<string, string> = new Map();
+  reminder!: ReminderService;
 
   async onload() {
     await this.loadSettings();
@@ -16,16 +23,24 @@ export default class BirthdayReminderPlugin extends Plugin {
       }
     );
 
+    const locale = getLocale(this.settings.language as Language);
+
     // 添加 ribbon 图标
-    this.addRibbonIcon('cake', '生日提醒', () => {
+    this.addRibbonIcon('cake', locale.ribbonTooltip, () => {
       void this.activateView();
     });
 
     // 添加命令 - 使用简短 ID，不包含插件名
     this.addCommand({
       id: 'show',
-      name: '显示生日提醒面板',
+      name: locale.commandShowPanel,
       callback: () => void this.activateView()
+    });
+
+    this.addCommand({
+      id: 'check-reminders',
+      name: locale.commandCheckReminders,
+      callback: () => this.reminder.check(true)
     });
 
     // 添加设置选项卡
@@ -33,51 +48,46 @@ export default class BirthdayReminderPlugin extends Plugin {
 
     // 监听文件变化以自动刷新视图
     this.setupFileWatcher();
+
+    // 每日提醒：布局就绪后再启动，避免启动瞬间弹通知
+    this.reminder = new ReminderService(this);
+    this.app.workspace.onLayoutReady(() => this.reminder.start());
   }
 
   setupFileWatcher(): void {
-    const vault = this.app.vault;
+    const isMarkdown = (file: TAbstractFile): boolean =>
+      file instanceof TFile && file.path.endsWith('.md');
 
-    // 监听文件创建
-    vault.on('create', (file) => {
-      if (file instanceof TFile && file.path.endsWith('.md')) {
+    const refreshOnFileChange = (file: TAbstractFile): void => {
+      if (isMarkdown(file)) this.refreshAllViews();
+    };
+
+    // 用 registerEvent 注册，插件卸载时自动解绑，避免监听器残留
+    this.registerEvent(this.app.vault.on('create', refreshOnFileChange));
+    this.registerEvent(this.app.vault.on('delete', refreshOnFileChange));
+    this.registerEvent(this.app.vault.on('rename', refreshOnFileChange));
+
+    // 只在生日属性真的变化时刷新：正文编辑、光标移动都不再触发全量重渲染
+    this.registerEvent(
+      this.app.metadataCache.on('changed', (file, _data, cache) => {
+        if (!isMarkdown(file)) return;
+        const frontmatter = isRecord(cache.frontmatter) ? cache.frontmatter : null;
+        const next = birthdaySignatureFor(frontmatter, this.settings);
+        if (this.birthdaySnapshots.get(file.path) === next) return;
+        this.birthdaySnapshots.set(file.path, next);
         this.refreshAllViews();
-      }
-    });
-
-    // 监听文件删除
-    vault.on('delete', (file) => {
-      if (file instanceof TFile && file.path.endsWith('.md')) {
-        this.refreshAllViews();
-      }
-    });
-
-    // 监听文件重命名
-    vault.on('rename', (file) => {
-      if (file instanceof TFile && file.path.endsWith('.md')) {
-        this.refreshAllViews();
-      }
-    });
-
-    // 监听文件修改（frontmatter 变化）
-    vault.on('modify', (file) => {
-      if (file instanceof TFile && file.path.endsWith('.md')) {
-        // 使用微延迟避免频繁刷新 - 使用 window.setTimeout 以保证弹出窗口兼容性
-        void window.setTimeout(() => this.refreshAllViews(), 100);
-      }
-    });
+      })
+    );
   }
 
   refreshAllViews(): void {
-    const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE);
-    if (leaves.length > 0) {
-      const view = leaves[0].view as BirthdayReminderView | null;
-      if (view) {
-        view.refresh();
+    for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE)) {
+      if (leaf.view instanceof BirthdayReminderView) {
+        leaf.view.refresh();
       }
     }
   }
-  
+
   async activateView(): Promise<void> {
     const { workspace } = this.app;
 
@@ -106,7 +116,7 @@ export default class BirthdayReminderPlugin extends Plugin {
       await workspace.revealLeaf(leaf);
     }
   }
-  
+
   async loadSettings(): Promise<void> {
     const data = await this.loadData();
     const typedData = data as Partial<BirthdayReminderSettings> | undefined;
@@ -118,9 +128,10 @@ export default class BirthdayReminderPlugin extends Plugin {
     // 设置更改后刷新视图
     this.refreshAllViews();
   }
-  
+
   onunload() {
+    this.reminder?.stop();
     // 清理视图
-    this.app.workspace.getLeavesOfType(VIEW_TYPE).forEach(leaf => leaf.detach());
+    this.app.workspace.detachLeavesOfType(VIEW_TYPE);
   }
 }

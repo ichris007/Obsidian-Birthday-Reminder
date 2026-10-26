@@ -1,4 +1,6 @@
 import solarLunar from 'solarlunar';
+import type { DateOnly, LunarInput, NextBirthday } from './utils';
+import { diffInDays, toLocalDate } from './utils';
 
 export interface LunarDate {
   year: number;
@@ -149,4 +151,54 @@ export function getGanZhi(year: number): string {
   const ganIndex = ((offset % 10) + 10) % 10;
   const zhiIndex = ((offset % 12) + 12) % 12;
   return gan[ganIndex] + zhi[zhiIndex];
+}
+
+/** 农历 → 公历。该年没有对应闰月时回退到普通月；超出 solarlunar 支持范围返回 null。 */
+export function lunarToSolar(input: LunarInput): DateOnly | null {
+  const convert = (isLeap: boolean): DateOnly | null => {
+    try {
+      const result = solarLunar.lunar2solar(input.year, input.month, input.day, isLeap);
+      if (typeof result !== 'object' || result === null) return null;
+      return { year: result.cYear, month: result.cMonth, day: result.cDay };
+    } catch (error) {
+      console.warn('Lunar to solar conversion failed:', error);
+      return null;
+    }
+  };
+
+  const exact = convert(input.isLeap);
+  if (exact) return exact;
+  return input.isLeap ? convert(false) : null;
+}
+
+/** 格式化农历月日：中文「四月廿六」/ 英文「Apr 26th」 */
+export function formatLunarMonthDay(month: number, day: number, isLeap: boolean, language: string = 'zh-cn'): string {
+  const isEnglish = language === 'en-us';
+  if (isEnglish) {
+    const monthName = MONTH_NAMES_EN[month - 1] ?? String(month);
+    return `${isLeap ? 'Leap ' : ''}${monthName} ${getDayNameEn(day)}`;
+  }
+  const monthName = MONTH_NAMES_CN[month - 1] ?? String(month);
+  const dayName = DAY_NAMES_CN[day - 1] ?? String(day);
+  const text = `${monthName}月${dayName}`;
+  return isLeap ? `闰${text}` : text;
+}
+
+/**
+ * 农历生日的下一次公历日期。
+ * 农历生日每年的公历日期都不同，所以按「今天的农历年」逐年试，取第一个还没过的。
+ */
+export function nextLunarOccurrence(birth: LunarInput, today: DateOnly): NextBirthday | null {
+  const todayLunar = solarToLunar(toLocalDate(today));
+  const startYear = todayLunar ? todayLunar.year : today.year;
+
+  for (let year = startYear; year <= startYear + 1; year++) {
+    const solar = lunarToSolar({ ...birth, year });
+    if (!solar) continue;
+    const daysRemaining = diffInDays(today, solar);
+    if (daysRemaining >= 0) {
+      return { date: solar, daysRemaining, age: year - birth.year };
+    }
+  }
+  return null;
 }
