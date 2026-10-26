@@ -2,6 +2,10 @@
 
 [English](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/README.md) | [中文文档](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/README-ZH.md)
 
+[![Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%237c3aed&label=downloads&query=%24%5B%22birthday-reminder%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)](https://obsidian.md/plugins?id=birthday-reminder) ![Obsidian](https://img.shields.io/badge/dynamic/json?query=%24.minAppVersion&url=https%3A%2F%2Fraw.githubusercontent.com%2Fichris007%2FObsidian-Birthday-Reminder%2Fmain%2Fmanifest.json&label=Obsidian&color=7c3aed&prefix=v) [![GitHub stars](https://img.shields.io/github/stars/ichris007/Obsidian-Birthday-Reminder?style=flat&color=%237c3aed)](https://github.com/ichris007/Obsidian-Birthday-Reminder/stargazers) [![License](https://img.shields.io/github/license/ichris007/Obsidian-Birthday-Reminder?color=%237c3aed)](https://github.com/ichris007/Obsidian-Birthday-Reminder/blob/main/LICENSE)
+
+[Report a bug](https://github.com/ichris007/Obsidian-Birthday-Reminder/issues/new) · [Request a feature](https://github.com/ichris007/Obsidian-Birthday-Reminder/issues/new)
+
 ## 1 📖 简介
 
 **Birthday Reminder** （生日提醒）是一款为 Obsidian 设计的生日提醒插件，帮助你轻松管理亲朋好友、同事客户的重要生日信息。插件支持公历/农历转换、生肖星座显示、智能日历视图，并自动适配侧边栏和主窗口布局。
